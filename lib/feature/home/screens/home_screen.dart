@@ -1,0 +1,98 @@
+import 'package:flutter/material.dart';
+import 'package:hire_near_fyp/core/widgets/search_bar.dart';
+import 'package:hire_near_fyp/data/dummy/categary_data.dart';
+import 'package:hire_near_fyp/features/category/screens/category_screen.dart';
+import 'package:hire_near_fyp/features/home/popular_workers/data/category_worker_data.dart';
+import 'package:hire_near_fyp/features/home/popular_workers/data/worker_data.dart';
+import 'package:hire_near_fyp/features/home/popular_workers/widgets/popular_workers_section.dart';
+import 'package:hire_near_fyp/features/home/popular_workers/widgets/top_bar.dart';
+import 'package:hire_near_fyp/features/home/widgets/become_worker_banner.dart';
+import 'package:hire_near_fyp/features/home/widgets/buttom_nav_bar.dart';
+import 'package:hire_near_fyp/features/home/widgets/category_card.dart';
+import 'package:hire_near_fyp/features/home/popular_workers/models/worker_model.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final int _selectedIndex = 0;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // bottomNavigationBar: ButtomNavBar(
+      //   currentIndex: _selectedIndex,
+      //   onTap: (index) {
+      //     setState(() {
+      //       _selectedIndex = index;
+      //     });
+      //   },
+      // ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.only(bottom: 16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            TopBar(
+              location: 'Lower Dir, Maidan',
+              notificationCount: 3,
+              userName: 'Developer Muhammad Zahidullah',
+            ),
+            AppSearchBar(hintText: 'Search a worker here'),
+
+            //Icon(Icons.keyboard_arrow_down_outlined),
+            SizedBox(height: 20),
+            SizedBox(
+              height: 430,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: GridView.builder(
+                  scrollDirection: Axis.vertical,
+                  itemCount: CategaryData.categories.length,
+                  physics: NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
+                    childAspectRatio: 1.8,
+                  ),
+                  itemBuilder: (BuildContext context, index) {
+                    return CategoryCard(
+                      category: CategaryData.categories[index],
+                      ontap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CategoryScreen(
+                              categoryName:
+                                  CategaryData.categories[index].title,
+                              categorySubtitle:
+                                  'Find trusted ${CategaryData.categories[index].title} near you',
+                              categoryIcon:
+                                  CategaryData.categories[index].iconData,
+                              iconColor:
+                                  CategaryData.categories[index].iconColor,
+                              iconBgColor: CategaryData.categories[index].color,
+                              //workers: CategoryWorkerData.plumbers,
+                              workers: CategaryData.categories[index].workers,
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
+            PopularWorkersSection(workers: WorkerData.workerList),
+            BecomeWorkerBanner(),
+          ],
+        ),
+      ),
+    );
+  }
+}
