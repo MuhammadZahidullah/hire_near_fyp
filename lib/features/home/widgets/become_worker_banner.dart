@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class BecomeWorkerBanner extends StatelessWidget {
-  const BecomeWorkerBanner({super.key});
+  final VoidCallback onTap;
+  const BecomeWorkerBanner({super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +43,10 @@ class BecomeWorkerBanner extends StatelessWidget {
                 ),
                 SizedBox(height: 8),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    print('JOIN NOW TAPPED');
+                    onTap();
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Color(0xFF6C3CE1),

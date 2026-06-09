@@ -52,6 +52,7 @@ class ProfilHeroCard extends StatelessWidget {
                   children: [
                     Text(
                       user.name,
+                      maxLines: 1,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,

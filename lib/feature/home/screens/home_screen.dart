@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:hire_near_fyp/core/widgets/search_bar.dart';
 import 'package:hire_near_fyp/data/dummy/categary_data.dart';
-import 'package:hire_near_fyp/features/category/screens/category_screen.dart';
-import 'package:hire_near_fyp/features/home/popular_workers/data/category_worker_data.dart';
+import 'package:hire_near_fyp/feature/become_worker/become_worker_screen/become_worker_screen.dart';
+import 'package:hire_near_fyp/feature/category/screens/category_screen.dart';
+//import 'package:hire_near_fyp/features/home/popular_workers/data/category_worker_data.dart';
 import 'package:hire_near_fyp/features/home/popular_workers/data/worker_data.dart';
 import 'package:hire_near_fyp/features/home/popular_workers/widgets/popular_workers_section.dart';
 import 'package:hire_near_fyp/features/home/popular_workers/widgets/top_bar.dart';
 import 'package:hire_near_fyp/features/home/widgets/become_worker_banner.dart';
-import 'package:hire_near_fyp/features/home/widgets/buttom_nav_bar.dart';
+//import 'package:hire_near_fyp/features/home/widgets/buttom_nav_bar.dart';
 import 'package:hire_near_fyp/features/home/widgets/category_card.dart';
-import 'package:hire_near_fyp/features/home/popular_workers/models/worker_model.dart';
+//import 'package:hire_near_fyp/features/home/popular_workers/models/worker_model.dart';
+//import 'package:hire_near_fyp/feature/become_worker/become_worker_screen/become_worker_screen.dart';
+//import 'package:hire_near_fyp/feature/category/screens/category_screen.dart';
+//import 'package:hire_near_fyp/feature/category/screens/category_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,7 +23,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final int _selectedIndex = 0;
+  //final int _selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,7 +93,14 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             PopularWorkersSection(workers: WorkerData.workerList),
-            BecomeWorkerBanner(),
+            BecomeWorkerBanner(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => BecomeWorkerScreen()),
+                );
+              },
+            ),
           ],
         ),
       ),

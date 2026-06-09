@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hire_near_fyp/data/models/user_model.dart';
+import 'package:hire_near_fyp/feature/become_worker/become_worker_screen/become_worker_screen.dart';
 import 'package:hire_near_fyp/features/home/widgets/profile/menu_item_tile.dart';
 import 'package:hire_near_fyp/features/home/widgets/profile/menu_section.dart';
 import 'package:hire_near_fyp/features/home/widgets/profile/profil_hero_card.dart';
@@ -50,7 +51,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ProfilHeroCard(onEditTap: () {}, user: user),
               const SizedBox(height: 16),
 
-              WorkerBanner(onTap: () {}),
+              WorkerBanner(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BecomeWorkerScreen(),
+                    ),
+                  );
+                },
+              ),
               const SizedBox(height: 24),
 
               MenuSection(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hire_near_fyp/core/widgets/search_bar.dart';
-import 'package:hire_near_fyp/features/category/widgets/category_top_bar.dart';
-import 'package:hire_near_fyp/features/category/widgets/filter_chips_row.dart';
-import 'package:hire_near_fyp/features/category/widgets/post_job_banner.dart';
+import 'package:hire_near_fyp/feature/category/widgets/category_top_bar.dart';
+import 'package:hire_near_fyp/feature/category/widgets/filter_chips_row.dart';
+import 'package:hire_near_fyp/feature/category/widgets/post_job_banner.dart';
 import 'package:hire_near_fyp/features/home/popular_workers/models/category_worker_model.dart';
 import 'package:hire_near_fyp/features/home/widgets/buttom_nav_bar.dart';
 import 'package:hire_near_fyp/features/home/widgets/category_worker_cartd.dart';
