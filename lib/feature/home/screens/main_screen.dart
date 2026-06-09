@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hire_near_fyp/feature/bookings/screens/booking_screen.dart';
 import 'package:hire_near_fyp/feature/home/screens/home_screen.dart';
 import 'package:hire_near_fyp/features/home/widgets/buttom_nav_bar.dart';
 import 'package:hire_near_fyp/features/home/widgets/profile/profile_screen.dart';
@@ -21,7 +22,7 @@ class _MainScreenState extends State<MainScreen> {
   List<Widget> screens = [
     HomeScreen(),
 
-    Container(),
+    BookingsScreen(),
     Container(),
     ProfileScreen(),
   ];
