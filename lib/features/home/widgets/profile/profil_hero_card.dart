@@ -87,32 +87,40 @@ class ProfilHeroCard extends StatelessWidget {
             ],
           ),
           SizedBox(height: 20),
-          Row(
-            children: [
-              Expanded(
-                child: StatBadge(
-                  icon: Icons.calendar_today_outlined,
-                  value: '${user.bookings}',
-                  label: 'Booking',
+          // Stats Row with dividers
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: StatBadge(
+                    icon: Icons.calendar_today_outlined,
+                    value: '${user.bookings}',
+                    label: 'Bookings',
+                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: StatBadge(
-                  icon: Icons.star,
-                  value: '${user.rating}',
-                  label: "Rating",
+                Container(width: 1, height: 40, color: Colors.white30),
+                Expanded(
+                  child: StatBadge(
+                    icon: Icons.star,
+                    value: '${user.rating}',
+                    label: 'Rating',
+                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: StatBadge(
-                  icon: Icons.account_balance_wallet,
-                  value: "PKR ${user.totalSpent.toInt()}",
-                  label: "Total Spent",
+                Container(width: 1, height: 40, color: Colors.white30),
+                Expanded(
+                  child: StatBadge(
+                    icon: Icons.account_balance_wallet,
+                    value: 'PKR ${user.totalSpent.toInt()}',
+                    label: 'Total Spent',
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

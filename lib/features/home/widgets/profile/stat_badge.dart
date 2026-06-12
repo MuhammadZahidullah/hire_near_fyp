@@ -14,10 +14,29 @@ class StatBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.red, // ← bright red to confirm change
-      padding: EdgeInsets.all(8),
-      child: Text(value, style: TextStyle(color: Colors.white, fontSize: 12)),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: Colors.white, size: 20),
+        ),
+        SizedBox(height: 8),
+        Text(
+          value,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 2),
+        Text(label, style: TextStyle(color: Colors.white70, fontSize: 11)),
+      ],
     );
   }
 }
