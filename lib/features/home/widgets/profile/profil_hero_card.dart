@@ -108,7 +108,7 @@ class ProfilHeroCard extends StatelessWidget {
               Expanded(
                 child: StatBadge(
                   icon: Icons.account_balance_wallet,
-                  value: "${user.totalSpent}",
+                  value: "PKR ${user.totalSpent.toInt()}",
                   label: "Total Spent",
                 ),
               ),

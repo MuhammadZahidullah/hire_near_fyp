@@ -32,6 +32,7 @@ class CustomTextField extends StatelessWidget {
             child: TextField(
               controller: controller,
               maxLines: maxLines ?? 1,
+              style: TextStyle(fontSize: 14, color: Colors.black87),
               decoration: InputDecoration(
                 border: InputBorder.none,
                 hintText: hintText,

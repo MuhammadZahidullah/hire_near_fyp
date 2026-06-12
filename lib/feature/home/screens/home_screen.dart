@@ -50,46 +50,42 @@ class _HomeScreenState extends State<HomeScreen> {
 
             //Icon(Icons.keyboard_arrow_down_outlined),
             SizedBox(height: 20),
-            SizedBox(
-              height: 430,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: GridView.builder(
-                  scrollDirection: Axis.vertical,
-                  itemCount: CategaryData.categories.length,
-                  physics: NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                    childAspectRatio: 1.8,
-                  ),
-                  itemBuilder: (BuildContext context, index) {
-                    return CategoryCard(
-                      category: CategaryData.categories[index],
-                      ontap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CategoryScreen(
-                              categoryName:
-                                  CategaryData.categories[index].title,
-                              categorySubtitle:
-                                  'Find trusted ${CategaryData.categories[index].title} near you',
-                              categoryIcon:
-                                  CategaryData.categories[index].iconData,
-                              iconColor:
-                                  CategaryData.categories[index].iconColor,
-                              iconBgColor: CategaryData.categories[index].color,
-                              //workers: CategoryWorkerData.plumbers,
-                              workers: CategaryData.categories[index].workers,
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  },
+            // ✅ Replace with
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: GridView.builder(
+                shrinkWrap: true, // ← key fix
+                scrollDirection: Axis.vertical,
+                itemCount: CategaryData.categories.length,
+                physics: NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                  childAspectRatio: 0.9, // ← adjust
                 ),
+                itemBuilder: (context, index) {
+                  return CategoryCard(
+                    category: CategaryData.categories[index],
+                    ontap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CategoryScreen(
+                            categoryName: CategaryData.categories[index].title,
+                            categorySubtitle:
+                                'Find trusted ${CategaryData.categories[index].title} near you',
+                            categoryIcon:
+                                CategaryData.categories[index].iconData,
+                            iconColor: CategaryData.categories[index].iconColor,
+                            iconBgColor: CategaryData.categories[index].color,
+                            workers: CategaryData.categories[index].workers,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
             ),
             PopularWorkersSection(workers: WorkerData.workerList),

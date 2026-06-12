@@ -40,8 +40,8 @@ class BookingCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        padding: EdgeInsets.all(12),
+        margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -54,13 +54,14 @@ class BookingCard extends StatelessWidget {
           ],
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Left — Image
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Container(
-                width: 80,
-                height: 80,
+                width: 70,
+                height: 70,
                 color: Colors.grey.shade200,
                 child: Icon(Icons.person, size: 40, color: Colors.grey),
               ),
@@ -75,16 +76,18 @@ class BookingCard extends StatelessWidget {
                 children: [
                   Text(
                     booking.workerName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 15,
+                      fontSize: 13,
                       color: Colors.black,
                     ),
                   ),
                   SizedBox(height: 4),
                   Text(
                     booking.role,
-                    style: TextStyle(color: Color(0xFF6C3CE1), fontSize: 13),
+                    style: TextStyle(color: Color(0xFF6C3CE1), fontSize: 12),
                   ),
                   SizedBox(height: 4),
                   Row(
@@ -98,7 +101,7 @@ class BookingCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           booking.location,
-                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                          style: TextStyle(fontSize: 11, color: Colors.grey),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -113,9 +116,12 @@ class BookingCard extends StatelessWidget {
                         color: Colors.grey,
                       ),
                       SizedBox(width: 4),
-                      Text(
-                        '${booking.date} • ${booking.time}',
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      Expanded(
+                        child: Text(
+                          '${booking.date} • ${booking.time}',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 11, color: Colors.grey),
+                        ),
                       ),
                     ],
                   ),
@@ -128,6 +134,7 @@ class BookingCard extends StatelessWidget {
             // Right — Status + Price + Arrow
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 // Status Badge
                 Container(
@@ -141,7 +148,7 @@ class BookingCard extends StatelessWidget {
                         booking.status.substring(1),
                     style: TextStyle(
                       color: _getStatusColor(),
-                      fontSize: 11,
+                      fontSize: 10,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -152,11 +159,11 @@ class BookingCard extends StatelessWidget {
                   style: TextStyle(
                     color: Color(0xFF6C3CE1),
                     fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                    fontSize: 12,
                   ),
                 ),
                 SizedBox(height: 4),
-                Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
+                Icon(Icons.arrow_forward_ios, size: 12, color: Colors.grey),
               ],
             ),
           ],

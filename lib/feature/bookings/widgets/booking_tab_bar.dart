@@ -83,12 +83,12 @@ class BookingTabBar extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 16, color: isActive ? activeColor : Colors.grey),
+              Icon(icon, size: 14, color: isActive ? activeColor : Colors.grey),
               SizedBox(width: 4),
               Text(
                 label,
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 10,
                   fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
                   color: isActive ? activeColor : Colors.grey,
                 ),
@@ -96,7 +96,7 @@ class BookingTabBar extends StatelessWidget {
               SizedBox(width: 4),
               // Count Badge
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                 decoration: BoxDecoration(
                   color: isActive ? activeColor : Colors.grey.shade300,
                   borderRadius: BorderRadius.circular(10),
