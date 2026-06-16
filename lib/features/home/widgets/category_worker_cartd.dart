@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hire_near_fyp/data/dummy/categary_data.dart';
+import 'package:hire_near_fyp/feature/booking_confirm/models/confirm_booking_model.dart';
+import 'package:hire_near_fyp/feature/booking_confirm/screens/confirm_booking_screen.dart';
 import 'package:hire_near_fyp/features/home/popular_workers/models/category_worker_model.dart';
 
 class CategoryWorkerCartd extends StatelessWidget {
@@ -14,6 +16,7 @@ class CategoryWorkerCartd extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -30,6 +33,7 @@ class CategoryWorkerCartd extends StatelessWidget {
         // boxShadow: BoxShadow(offset: Offset(4, 5))
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CircleAvatar(radius: 30),
           SizedBox(width: 12),
@@ -41,6 +45,8 @@ class CategoryWorkerCartd extends StatelessWidget {
                   children: [
                     Text(
                       worker.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     SizedBox(width: 4),
@@ -49,7 +55,12 @@ class CategoryWorkerCartd extends StatelessWidget {
                         : SizedBox(),
                   ],
                 ),
-                Text(worker.role, style: TextStyle(color: Colors.purple)),
+                Text(
+                  worker.role,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: Color(0xFF6C3CE1), fontSize: 12),
+                ),
                 Row(
                   children: [
                     Icon(Icons.star, color: Colors.amber, size: 15),
@@ -83,7 +94,7 @@ class CategoryWorkerCartd extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '(PKR ${worker.price})',
+                      'PKR ${worker.price}',
                       style: TextStyle(
                         color: Color(0xFF6C3CE1),
                         fontWeight: FontWeight.bold,
@@ -98,7 +109,34 @@ class CategoryWorkerCartd extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 8),
-              ElevatedButton(onPressed: () {}, child: Text('View Profile')),
+              // In category_worker_cartd.dart
+              ElevatedButton(
+                onPressed: () {
+                  print('VIEW PROFILE TAPPED');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ConfirmBookingScreen(
+                        booking: ConfirmBookingModel(
+                          workerName: worker.name,
+                          workerRole: worker.role,
+                          workerRating: worker.rating,
+                          workerReviews: worker.reviews,
+                          isVerified: worker.isVerified,
+                          serviceCharge: worker.price,
+                          bookingFee: 50,
+                          location: 'Your Location',
+                          date: '12 May 2024',
+                          time: '2:00 PM',
+                          service: worker.role,
+                          imageUrl: worker.imageUrl,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                child: Text('View Profile'),
+              ),
             ],
           ),
         ],

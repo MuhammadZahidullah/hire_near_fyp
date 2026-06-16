@@ -19,6 +19,7 @@ class AppSearchBar extends StatelessWidget {
           SizedBox(width: 7),
           Expanded(
             child: TextField(
+              style: TextStyle(fontSize: 15),
               decoration: InputDecoration(
                 hintText: hintText,
                 hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
