@@ -15,4 +15,14 @@ class BookingProvider extends ChangeNotifier {
     _bookings.add(booking);
     notifyListeners();
   }
+
+  void cancelBookings(int id) {
+    int index = _bookings.indexWhere((booking) => booking.id == id);
+
+    if (index != -1) {
+      _bookings[index] = _bookings[index].copyWith(status: 'cancelled');
+
+      notifyListeners();
+    }
+  }
 }

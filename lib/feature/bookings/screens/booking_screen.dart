@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hire_near_fyp/core/widgets/app_snack_bar.dart';
 import 'package:hire_near_fyp/feature/bookings/data/booking_data.dart';
 import 'package:hire_near_fyp/feature/bookings/models/booking_model.dart';
 import 'package:hire_near_fyp/feature/bookings/providers/booking_provider.dart';
@@ -156,7 +157,44 @@ class _BookingsScreenState extends State<BookingsScreen> {
                       itemBuilder: (context, index) {
                         return BookingCard(
                           booking: currentList[index],
-                          onTap: () {},
+                          onTap: () {
+                            if (currentList[index].status == 'pending') {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text('Cancel Booking'),
+                                  content: Text(
+                                    'Are you sure you want to cancel booking with ${currentList[index].workerName}?',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: Text('No'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        context
+                                            .read<BookingProvider>()
+                                            .cancelBookings(
+                                              currentList[index].id,
+                                            );
+
+                                        AppSnackBar.showWarning(
+                                          context,
+                                          'Booking Cancel',
+                                        );
+                                      },
+                                      child: Text(
+                                        ' Yes, Cancel',
+                                        style: TextStyle(color: Colors.red),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          },
                         );
                       },
                     ),
