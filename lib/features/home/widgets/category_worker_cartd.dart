@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hire_near_fyp/data/dummy/categary_data.dart';
 import 'package:hire_near_fyp/feature/booking_confirm/models/confirm_booking_model.dart';
 import 'package:hire_near_fyp/feature/booking_confirm/screens/confirm_booking_screen.dart';
 import 'package:hire_near_fyp/features/home/popular_workers/models/category_worker_model.dart';

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hire_near_fyp/core/widgets/app_snack_bar.dart';
 import 'package:hire_near_fyp/feature/booking_confirm/models/confirm_booking_model.dart';
 import 'package:hire_near_fyp/feature/booking_confirm/widgets/booking_detail_section.dart';
 //import 'package:hire_near_fyp/feature/booking_confirm/widgets/booking_details_section.dart';
@@ -6,12 +7,21 @@ import 'package:hire_near_fyp/feature/booking_confirm/widgets/price_detail_secti
 //import 'package:hire_near_fyp/feature/booking_confirm/widgets/price_details_section.dart';
 import 'package:hire_near_fyp/feature/booking_confirm/widgets/security_banner.dart';
 import 'package:hire_near_fyp/feature/booking_confirm/widgets/worker_summary_card.dart';
+import 'package:hire_near_fyp/feature/bookings/models/booking_model.dart';
+import 'package:hire_near_fyp/feature/bookings/providers/booking_provider.dart';
+import 'package:hire_near_fyp/feature/home/screens/main_screen.dart';
+import 'package:provider/provider.dart';
 
-class ConfirmBookingScreen extends StatelessWidget {
+class ConfirmBookingScreen extends StatefulWidget {
   final ConfirmBookingModel booking;
 
   const ConfirmBookingScreen({super.key, required this.booking});
 
+  @override
+  State<ConfirmBookingScreen> createState() => _ConfirmBookingScreenState();
+}
+
+class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,15 +80,15 @@ class ConfirmBookingScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Worker Summary Card
-                    WorkerSummaryCard(booking: booking),
+                    WorkerSummaryCard(booking: widget.booking),
                     SizedBox(height: 20),
 
                     // Booking Details
-                    BookingDetailsSection(booking: booking),
+                    BookingDetailsSection(booking: widget.booking),
                     SizedBox(height: 20),
 
                     // Price Details
-                    PriceDetailsSection(booking: booking),
+                    PriceDetailsSection(booking: widget.booking),
                     SizedBox(height: 20),
 
                     // Security Banner
@@ -98,7 +108,34 @@ class ConfirmBookingScreen extends StatelessWidget {
                   // Confirm Button
                   GestureDetector(
                     onTap: () {
-                      // confirm booking logic later
+                      var newBooking = BookingModel(
+                        id: DateTime.now().millisecondsSinceEpoch,
+                        workerName: widget.booking.workerName,
+                        role: widget.booking.workerRole,
+                        location: widget.booking.location,
+                        date: widget.booking.date,
+                        time: widget.booking.time,
+                        price: widget.booking.totalAmount,
+                        status: 'pending',
+                        imageUrl: widget.booking.imageUrl,
+                      );
+
+                      context.read<BookingProvider>().addBooking(newBooking);
+                      AppSnackBar.showSuccess(
+                        context,
+                        'Booking Confirmed Successfully!',
+                      );
+                      Future.delayed(Duration(seconds: 2), () {
+                        if (mounted) {
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MainScreen(initialIndex: 1),
+                            ),
+                            (route) => false,
+                          );
+                        }
+                      });
                     },
                     child: Container(
                       width: double.infinity,

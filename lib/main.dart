@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hire_near_fyp/core/theme/app_theme.dart';
+import 'package:hire_near_fyp/feature/bookings/providers/booking_provider.dart';
 import 'package:hire_near_fyp/feature/home/screens/home_screen.dart';
 import 'package:hire_near_fyp/feature/splash/screens/splash_screen.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(MyApp());
@@ -12,11 +14,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.theme,
+    return ChangeNotifierProvider(
+      create: (context) => BookingProvider(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.theme,
 
-      home: SplashScreen(),
+        home: SplashScreen(),
+      ),
     );
   }
 }

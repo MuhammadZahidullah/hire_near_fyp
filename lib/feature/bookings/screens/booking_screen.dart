@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hire_near_fyp/feature/bookings/data/booking_data.dart';
 import 'package:hire_near_fyp/feature/bookings/models/booking_model.dart';
+import 'package:hire_near_fyp/feature/bookings/providers/booking_provider.dart';
 import 'package:hire_near_fyp/feature/bookings/widgets/book_now_banner.dart';
 import 'package:hire_near_fyp/feature/bookings/widgets/booking_card.dart';
 import 'package:hire_near_fyp/feature/bookings/widgets/booking_section_title.dart';
 import 'package:hire_near_fyp/feature/bookings/widgets/booking_tab_bar.dart';
+import 'package:provider/provider.dart';
 
 class BookingsScreen extends StatefulWidget {
   const BookingsScreen({super.key});
@@ -17,16 +19,16 @@ class _BookingsScreenState extends State<BookingsScreen> {
   int _selectedTab = 0;
 
   // get list based on selected tab
-  List<BookingModel> get _currentList {
+  List<BookingModel> _getCurrentList(BookingProvider provider) {
     switch (_selectedTab) {
       case 0:
-        return BookingData.pending;
+        return provider.pendingBookings;
       case 1:
-        return BookingData.completed;
+        return provider.completeBookings;
       case 2:
-        return BookingData.cancelled;
+        return provider.cancelBooking;
       default:
-        return BookingData.pending;
+        return provider.pendingBookings;
     }
   }
 
@@ -60,6 +62,8 @@ class _BookingsScreenState extends State<BookingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bookingProvider = context.watch<BookingProvider>();
+    final currentList = _getCurrentList(bookingProvider);
     return Scaffold(
       backgroundColor: Color(0xFFF4F6FB),
       body: SafeArea(
@@ -126,9 +130,9 @@ class _BookingsScreenState extends State<BookingsScreen> {
                   _selectedTab = index;
                 });
               },
-              pendingCount: BookingData.pending.length,
-              completedCount: BookingData.completed.length,
-              cancelledCount: BookingData.cancelled.length,
+              pendingCount: bookingProvider.pendingBookings.length,
+              completedCount: bookingProvider.completeBookings.length,
+              cancelledCount: bookingProvider.cancelBooking.length,
             ),
 
             // Content
@@ -140,7 +144,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                     // Section Title
                     BookingSectionTitle(
                       title: _sectionTitle,
-                      count: _currentList.length,
+                      count: currentList.length,
                       color: _sectionColor,
                     ),
 
@@ -148,10 +152,10 @@ class _BookingsScreenState extends State<BookingsScreen> {
                     ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      itemCount: _currentList.length,
+                      itemCount: currentList.length,
                       itemBuilder: (context, index) {
                         return BookingCard(
-                          booking: _currentList[index],
+                          booking: currentList[index],
                           onTap: () {},
                         );
                       },

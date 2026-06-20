@@ -11,22 +11,29 @@ import 'package:hire_near_fyp/features/home/widgets/profile/profile_screen.dart'
 
 //import 'package:hire_near_fyp/features/home/widgets/buttom_nav_bar.dart';
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final int initialIndex;
+  const MainScreen({super.key, this.initialIndex = 0});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int currentIndex = 0;
+  late int currentIndex;
 
   List<Widget> screens = [
     HomeScreen(),
-
     BookingsScreen(),
     MessagesScreen(),
     ProfileScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    currentIndex = widget.initialIndex;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
