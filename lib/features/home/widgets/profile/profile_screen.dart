@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hire_near_fyp/data/models/user_model.dart';
+import 'package:hire_near_fyp/feature/auth/providers/auth_provider.dart';
+import 'package:hire_near_fyp/feature/auth/screens/login_screen.dart';
 import 'package:hire_near_fyp/feature/become_worker/become_worker_screen/become_worker_screen.dart';
 import 'package:hire_near_fyp/features/home/widgets/profile/menu_item_tile.dart';
 import 'package:hire_near_fyp/features/home/widgets/profile/menu_section.dart';
 import 'package:hire_near_fyp/features/home/widgets/profile/profil_hero_card.dart';
+import 'package:hire_near_fyp/features/home/widgets/profile/providers/profile_providers.dart';
 import 'package:hire_near_fyp/features/home/widgets/profile/worker_banner.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -18,17 +22,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool isDarkMode = true;
 
   // dummy user data
-  final UserModel user = UserModel(
-    name: "InamUllah",
-    email: "Inamullah@gmail.com",
-    location: "Matta, Swat",
-    bookings: 12,
-    rating: 4.7,
-    totalSpent: 3450,
-  );
 
   @override
   Widget build(BuildContext context) {
+    final profileProvider = context.watch<ProfileProvider>();
+    final user = profileProvider.user;
+
     return Scaffold(
       backgroundColor: Color(0xFFF4F6FB),
       body: SafeArea(
@@ -138,11 +137,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     label: 'About HireNear',
                     onTap: () {},
                   ),
+                  // ✅ New
                   MenuItemTile(
                     icon: Icons.logout,
                     label: 'Logout',
                     isDanger: true,
-                    onTap: () {},
+                    onTap: () {
+                      // Step 1 — logout from AuthProvider
+                      context.read<AuthProvider>().logout();
+
+                      // Step 2 — go to LoginScreen
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginScreen()),
+                        (route) => false,
+                      );
+                    },
                   ),
                 ],
               ),

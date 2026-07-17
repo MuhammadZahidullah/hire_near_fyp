@@ -83,10 +83,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
               FilterChipsRow(
                 onFilterSelected: (filter) {
                   //handle filters here
-                  onFilterSelected:
-                  (filter) {
-                    context.read<CategoryProvider>().setFilter(filter);
-                  };
+
+                  context.read<CategoryProvider>().setFilter(filter);
                 },
               ),
 
@@ -121,7 +119,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       itemCount: sortedWorkers.length,
                       itemBuilder: (context, index) {
                         return CategoryWorkerCartd(
-                          worker: filteredWorkers[index],
+                          worker: sortedWorkers[index],
                           onTap: () {},
                         );
                       },

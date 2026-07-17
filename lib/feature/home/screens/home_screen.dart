@@ -37,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
             // 1 - Top Bar
             TopBar(
               location: 'Lower Dir, Maidan',
-              notificationCount: 3,
+              // notificationCount: 3,
               userName: 'Developer Muhammad Zahidullah',
             ),
 

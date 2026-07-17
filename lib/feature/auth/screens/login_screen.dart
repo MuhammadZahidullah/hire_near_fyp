@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hire_near_fyp/core/widgets/rounded_button.dart';
+import 'package:hire_near_fyp/feature/auth/providers/auth_provider.dart';
 import 'package:hire_near_fyp/feature/auth/screens/register_screen.dart';
 import 'package:hire_near_fyp/feature/home/screens/home_screen.dart';
 import 'package:hire_near_fyp/feature/home/screens/main_screen.dart';
 import 'package:hire_near_fyp/main.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -26,6 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = context.watch<AuthProvider>();
     return Scaffold(
       body: SizedBox.expand(
         child: Stack(
@@ -99,16 +102,28 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                        child: RoundedButton(
-                          title: 'LogIn',
-                          onTap: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => MainScreen(),
-                              ),
-                            );
-                          },
+                        child: // ✅ New
+                        RoundedButton(
+                          title: authProvider.isLoading
+                              ? 'Loading...'
+                              : 'LogIn',
+                          onTap: authProvider.isLoading
+                              ? () {}
+                              : () async {
+                                  await context.read<AuthProvider>().login(
+                                    emailController.text.trim(),
+                                    passwordController.text.trim(),
+                                  );
+
+                                  if (context.read<AuthProvider>().isLoggedIn) {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => MainScreen(),
+                                      ),
+                                    );
+                                  }
+                                },
                         ),
                       ),
                       TextButton(
@@ -124,6 +139,34 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ],
                   ),
+
+                  // ← Add here below Row
+                  SizedBox(height: 8),
+
+                  // Error Message
+                  if (authProvider.errorMessage != null)
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      child: Text(
+                        authProvider.errorMessage!,
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+
+                  // Loading
+                  if (authProvider.isLoading)
+                    Padding(
+                      padding: EdgeInsets.all(8),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xFF6C3CE1),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),

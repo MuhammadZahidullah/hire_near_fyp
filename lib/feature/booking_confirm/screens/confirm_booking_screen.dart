@@ -10,6 +10,8 @@ import 'package:hire_near_fyp/feature/booking_confirm/widgets/worker_summary_car
 import 'package:hire_near_fyp/feature/bookings/models/booking_model.dart';
 import 'package:hire_near_fyp/feature/bookings/providers/booking_provider.dart';
 import 'package:hire_near_fyp/feature/home/screens/main_screen.dart';
+import 'package:hire_near_fyp/feature/notifications/providers/notification_provider.dart';
+import 'package:hire_near_fyp/features/home/widgets/profile/providers/profile_providers.dart';
 import 'package:provider/provider.dart';
 
 class ConfirmBookingScreen extends StatefulWidget {
@@ -121,6 +123,16 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                       );
 
                       context.read<BookingProvider>().addBooking(newBooking);
+                      context.read<ProfileProvider>().incrementBookings();
+                      context.read<ProfileProvider>().addToTotalSpent(
+                        widget.booking.totalAmount.toDouble(),
+                      );
+                      // After addBooking
+                      context.read<NotificationProvider>().addNotification(
+                        'Booking Confirmed',
+                        'Your booking with ${widget.booking.workerName} is confirmed',
+                        'booking',
+                      );
                       AppSnackBar.showSuccess(
                         context,
                         'Booking Confirmed Successfully!',

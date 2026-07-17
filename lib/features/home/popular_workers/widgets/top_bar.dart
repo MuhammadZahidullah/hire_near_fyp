@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:hire_near_fyp/feature/notifications/providers/notification_provider.dart';
+import 'package:provider/provider.dart';
 
 class TopBar extends StatelessWidget {
   final String userName;
   final String location;
-  final int notificationCount;
+  //final int notificationCount;
   const TopBar({
     super.key,
     required this.location,
-    required this.notificationCount,
+    //required this.notificationCount,
     required this.userName,
   });
 
   @override
   Widget build(BuildContext context) {
+    final notificationProvider = context.watch<NotificationProvider>();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 17.0, vertical: 12),
       child: Row(
@@ -61,7 +64,7 @@ class TopBar extends StatelessWidget {
                     shape: BoxShape.circle,
                   ),
                   child: Text(
-                    notificationCount.toString(),
+                    notificationProvider.unreadCount.toString(),
 
                     style: TextStyle(color: Colors.white, fontSize: 10),
                   ),

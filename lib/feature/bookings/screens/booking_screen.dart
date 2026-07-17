@@ -7,6 +7,7 @@ import 'package:hire_near_fyp/feature/bookings/widgets/book_now_banner.dart';
 import 'package:hire_near_fyp/feature/bookings/widgets/booking_card.dart';
 import 'package:hire_near_fyp/feature/bookings/widgets/booking_section_title.dart';
 import 'package:hire_near_fyp/feature/bookings/widgets/booking_tab_bar.dart';
+import 'package:hire_near_fyp/feature/notifications/providers/notification_provider.dart';
 import 'package:provider/provider.dart';
 
 class BookingsScreen extends StatefulWidget {
@@ -178,6 +179,14 @@ class _BookingsScreenState extends State<BookingsScreen> {
                                             .read<BookingProvider>()
                                             .cancelBookings(
                                               currentList[index].id,
+                                            );
+
+                                        context
+                                            .read<NotificationProvider>()
+                                            .addNotification(
+                                              'Booking Cancelled',
+                                              'Your booking with ${currentList[index].workerName} has been cancelled',
+                                              'cancel',
                                             );
 
                                         AppSnackBar.showWarning(
