@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hire_near_fyp/feature/booking_confirm/models/confirm_booking_model.dart';
 import 'package:hire_near_fyp/feature/booking_confirm/screens/confirm_booking_screen.dart';
+import 'package:hire_near_fyp/feature/favorites/providers/favorites_provider.dart';
 import 'package:hire_near_fyp/features/home/popular_workers/models/category_worker_model.dart';
+import 'package:provider/provider.dart';
 
 class CategoryWorkerCartd extends StatelessWidget {
   final CategoryWorkerModel worker;
@@ -83,6 +85,25 @@ class CategoryWorkerCartd extends StatelessWidget {
           ),
           Column(
             children: [
+              Consumer<FavoritesProvider>(
+                builder: (context, favProvider, child) {
+                  return GestureDetector(
+                    onTap: () {
+                      favProvider.toggleFavorite(worker);
+                    },
+                    child: Icon(
+                      favProvider.isFavorite(worker.id)
+                          ? Icons
+                                .favorite // ← filled red
+                          : Icons.favorite_border, // ← empty grey
+                      color: favProvider.isFavorite(worker.id)
+                          ? Colors.red
+                          : Colors.grey,
+                      size: 22,
+                    ),
+                  );
+                },
+              ),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
@@ -92,6 +113,7 @@ class CategoryWorkerCartd extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
+                    // In right Column — add above price box
                     Text(
                       'PKR ${worker.price}',
                       style: TextStyle(

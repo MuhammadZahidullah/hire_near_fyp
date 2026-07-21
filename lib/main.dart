@@ -3,8 +3,10 @@ import 'package:hire_near_fyp/core/theme/app_theme.dart';
 import 'package:hire_near_fyp/feature/auth/providers/auth_provider.dart';
 import 'package:hire_near_fyp/feature/bookings/providers/booking_provider.dart';
 import 'package:hire_near_fyp/feature/category/provider/category_provider.dart';
+import 'package:hire_near_fyp/feature/favorites/providers/favorites_provider.dart';
 import 'package:hire_near_fyp/feature/home/screens/home_screen.dart';
 import 'package:hire_near_fyp/feature/notifications/providers/notification_provider.dart';
+import 'package:hire_near_fyp/feature/review/providers/review_provider.dart';
 import 'package:hire_near_fyp/feature/search/providers/search_provider.dart';
 import 'package:hire_near_fyp/feature/splash/screens/splash_screen.dart';
 import 'package:hire_near_fyp/features/home/widgets/profile/providers/profile_providers.dart';
@@ -27,6 +29,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ProfileProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
+        ChangeNotifierProvider(create: (_) => ReviewProvider()),
+        ChangeNotifierProvider(create: (_) => FavoritesProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

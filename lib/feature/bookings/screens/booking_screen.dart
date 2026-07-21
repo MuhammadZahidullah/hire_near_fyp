@@ -8,6 +8,7 @@ import 'package:hire_near_fyp/feature/bookings/widgets/booking_card.dart';
 import 'package:hire_near_fyp/feature/bookings/widgets/booking_section_title.dart';
 import 'package:hire_near_fyp/feature/bookings/widgets/booking_tab_bar.dart';
 import 'package:hire_near_fyp/feature/notifications/providers/notification_provider.dart';
+import 'package:hire_near_fyp/feature/review/widgets/add_reveiw_sheet.dart';
 import 'package:provider/provider.dart';
 
 class BookingsScreen extends StatefulWidget {
@@ -159,6 +160,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                         return BookingCard(
                           booking: currentList[index],
                           onTap: () {
+                            // Pending
                             if (currentList[index].status == 'pending') {
                               showDialog(
                                 context: context,
@@ -180,7 +182,6 @@ class _BookingsScreenState extends State<BookingsScreen> {
                                             .cancelBookings(
                                               currentList[index].id,
                                             );
-
                                         context
                                             .read<NotificationProvider>()
                                             .addNotification(
@@ -188,14 +189,13 @@ class _BookingsScreenState extends State<BookingsScreen> {
                                               'Your booking with ${currentList[index].workerName} has been cancelled',
                                               'cancel',
                                             );
-
                                         AppSnackBar.showWarning(
                                           context,
-                                          'Booking Cancel',
+                                          'Booking Cancelled',
                                         );
                                       },
                                       child: Text(
-                                        ' Yes, Cancel',
+                                        'Yes, Cancel',
                                         style: TextStyle(color: Colors.red),
                                       ),
                                     ),
@@ -203,8 +203,32 @@ class _BookingsScreenState extends State<BookingsScreen> {
                                 ),
                               );
                             }
-                          },
-                        );
+                            // Completed ← inside onTap
+                            else if (currentList[index].status == 'completed') {
+                              showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20),
+                                  ),
+                                ),
+                                builder: (context) => AddReviewSheet(
+                                  workerId: currentList[index].id,
+                                  workerName: currentList[index].workerName,
+                                  userName: 'Muhammad Zahidullah',
+                                ),
+                              );
+                            }
+                            // Cancelled ← inside onTap
+                            else {
+                              AppSnackBar.showWarning(
+                                context,
+                                'This booking was cancelled',
+                              );
+                            }
+                          }, // ← onTap closes here
+                        ); // ← BookingCard closes here
                       },
                     ),
 
