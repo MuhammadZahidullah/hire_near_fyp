@@ -8,155 +8,233 @@ import 'package:provider/provider.dart';
 class CategoryWorkerCartd extends StatelessWidget {
   final CategoryWorkerModel worker;
   final VoidCallback onTap;
+
   const CategoryWorkerCartd({
     super.key,
-    required this.onTap,
     required this.worker,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final favProvider = context.watch<FavoritesProvider>();
+
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: EdgeInsets.all(14),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-
+        borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.15),
-            blurRadius: 8,
-            offset: Offset(0, 2),
+            color: Colors.black.withOpacity(.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
-
-        // boxShadow: BoxShadow(offset: Offset(4, 5))
       ),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(radius: 30),
-          SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+          // HEADER
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CircleAvatar(
+                radius: 30,
+                backgroundColor: Colors.grey.shade200,
+                child: const Icon(Icons.person, size: 32, color: Colors.grey),
+              ),
+
+              const SizedBox(width: 14),
+
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      worker.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            worker.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+
+                        if (worker.isVerified)
+                          const Padding(
+                            padding: EdgeInsets.only(left: 4),
+                            child: Icon(
+                              Icons.verified,
+                              color: Colors.blue,
+                              size: 18,
+                            ),
+                          ),
+                      ],
                     ),
-                    SizedBox(width: 4),
-                    worker.isVerified
-                        ? Icon(Icons.verified, color: Colors.blue, size: 16)
-                        : SizedBox(),
+
+                    const SizedBox(height: 4),
+
+                    Text(
+                      worker.role,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF6C63FF),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ],
                 ),
-                Text(
-                  worker.role,
+              ),
+
+              InkWell(
+                borderRadius: BorderRadius.circular(30),
+                onTap: () {
+                  favProvider.toggleFavorite(worker);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Icon(
+                    favProvider.isFavorite(worker.id)
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                    color: favProvider.isFavorite(worker.id)
+                        ? Colors.red
+                        : Colors.grey,
+                    size: 24,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 18),
+          // INFO ROW
+          Row(
+            children: [
+              const Icon(Icons.star, color: Colors.amber, size: 18),
+
+              const SizedBox(width: 4),
+
+              Text(
+                worker.rating.toString(),
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+
+              const SizedBox(width: 16),
+
+              Expanded(
+                child: Text(
+                  '${worker.reviews} Reviews',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: Color(0xFF6C3CE1), fontSize: 12),
+                  style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
                 ),
-                Row(
-                  children: [
-                    Icon(Icons.star, color: Colors.amber, size: 15),
-                    SizedBox(width: 3),
-                    Text(worker.rating.toString()),
-                    SizedBox(width: 3),
-                    Text(
-                      '(${worker.reviews} reviews)',
-                      style: TextStyle(color: Colors.grey, fontSize: 12),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Icon(Icons.location_on, color: Colors.grey, size: 14),
-                    Text(worker.distance),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Column(
-            children: [
-              Consumer<FavoritesProvider>(
-                builder: (context, favProvider, child) {
-                  return GestureDetector(
-                    onTap: () {
-                      favProvider.toggleFavorite(worker);
-                    },
-                    child: Icon(
-                      favProvider.isFavorite(worker.id)
-                          ? Icons
-                                .favorite // ← filled red
-                          : Icons.favorite_border, // ← empty grey
-                      color: favProvider.isFavorite(worker.id)
-                          ? Colors.red
-                          : Colors.grey,
-                      size: 22,
-                    ),
-                  );
-                },
               ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Color(0xFFEDE7F6),
-                  borderRadius: BorderRadius.circular(8),
+
+              const Icon(Icons.location_on, color: Colors.grey, size: 18),
+
+              const SizedBox(width: 4),
+
+              Text(
+                worker.distance,
+                style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 18),
+          Row(
+            children: [
+              // PRICE CARD
+              Expanded(
+                flex: 2,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 10,
+                    horizontal: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF3EEFF),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        'PKR ${worker.price}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF6C63FF),
+                        ),
+                      ),
+
+                      const SizedBox(height: 4),
+
+                      const Text(
+                        'Service Fee',
+                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                      ),
+                    ],
+                  ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    // In right Column — add above price box
-                    Text(
-                      'PKR ${worker.price}',
+              ),
+
+              const SizedBox(width: 14),
+
+              // VIEW PROFILE BUTTON
+              Expanded(
+                flex: 3,
+                child: SizedBox(
+                  height: 52,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF6C63FF),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ConfirmBookingScreen(
+                            booking: ConfirmBookingModel(
+                              workerName: worker.name,
+                              workerRole: worker.role,
+                              workerRating: worker.rating,
+                              workerReviews: worker.reviews,
+                              isVerified: worker.isVerified,
+                              serviceCharge: worker.price,
+                              bookingFee: 50,
+                              location: 'Your Location',
+                              date: '12 May 2024',
+                              time: '2:00 PM',
+                              service: worker.role,
+                              imageUrl: worker.imageUrl,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+
+                    child: const Text(
+                      'View Profile',
                       style: TextStyle(
-                        color: Color(0xFF6C3CE1),
+                        fontSize: 15,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 4),
-                    Text(
-                      'Service Charge',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-              SizedBox(height: 8),
-              // In category_worker_cartd.dart
-              ElevatedButton(
-                onPressed: () {
-                  print('VIEW PROFILE TAPPED');
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ConfirmBookingScreen(
-                        booking: ConfirmBookingModel(
-                          workerName: worker.name,
-                          workerRole: worker.role,
-                          workerRating: worker.rating,
-                          workerReviews: worker.reviews,
-                          isVerified: worker.isVerified,
-                          serviceCharge: worker.price,
-                          bookingFee: 50,
-                          location: 'Your Location',
-                          date: '12 May 2024',
-                          time: '2:00 PM',
-                          service: worker.role,
-                          imageUrl: worker.imageUrl,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-                child: Text('View Profile'),
               ),
             ],
           ),

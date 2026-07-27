@@ -9,6 +9,7 @@ import 'package:hire_near_fyp/features/home/popular_workers/widgets/popular_work
 import 'package:hire_near_fyp/features/home/popular_workers/widgets/top_bar.dart';
 import 'package:hire_near_fyp/features/home/widgets/become_worker_banner.dart';
 import 'package:hire_near_fyp/features/home/widgets/category_card.dart';
+import 'package:hire_near_fyp/features/home/widgets/profile/providers/profile_providers.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -22,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     // Search Provider
+    final profileProvider = context.watch<ProfileProvider>();
     final searchProvider = context.watch<SearchProvider>();
     final filteredWorkers = searchProvider.getFilteredWorkers(
       WorkerData.workerList,
@@ -36,9 +38,9 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             // 1 - Top Bar
             TopBar(
-              location: 'Lower Dir, Maidan',
+              location: profileProvider.userLocation,
               // notificationCount: 3,
-              userName: 'Developer Muhammad Zahidullah',
+              userName: profileProvider.userName,
             ),
 
             // 2 - Search Bar

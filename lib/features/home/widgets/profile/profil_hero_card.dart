@@ -53,9 +53,10 @@ class ProfilHeroCard extends StatelessWidget {
                     Text(
                       user.name,
                       maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 18,
+                        fontSize: 12,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

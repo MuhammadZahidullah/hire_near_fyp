@@ -11,8 +11,11 @@ import 'package:hire_near_fyp/feature/search/providers/search_provider.dart';
 import 'package:hire_near_fyp/feature/splash/screens/splash_screen.dart';
 import 'package:hire_near_fyp/features/home/widgets/profile/providers/profile_providers.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 

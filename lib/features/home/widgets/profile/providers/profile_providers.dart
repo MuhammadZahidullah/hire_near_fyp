@@ -4,6 +4,10 @@ import 'package:hire_near_fyp/data/models/user_model.dart';
 class ProfileProvider extends ChangeNotifier {
   // State — dummy user for now
   UserModel _user = UserModel(
+    id: '',
+    phone: '03001234567',
+    activeRole: 'user',
+    isWorker: false,
     name: 'Muhammad Zahidullah',
     email: 'zahid@gmail.com',
     location: 'Lower Dir, Maidan',

@@ -53,5 +53,12 @@ class CategaryData {
       iconColor: Color(0xFF0891B2),
       workers: CategoryWorkerData.mechanics,
     ),
+    CategoryModel(
+      color: Color(0xFFE8EAF6),
+      iconData: Icons.grid_view,
+      title: 'More',
+      iconColor: Color(0xFF3949AB),
+      workers: [], // empty for now
+    ),
   ];
 }

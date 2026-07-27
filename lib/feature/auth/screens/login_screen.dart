@@ -4,6 +4,7 @@ import 'package:hire_near_fyp/feature/auth/providers/auth_provider.dart';
 import 'package:hire_near_fyp/feature/auth/screens/register_screen.dart';
 import 'package:hire_near_fyp/feature/home/screens/home_screen.dart';
 import 'package:hire_near_fyp/feature/home/screens/main_screen.dart';
+import 'package:hire_near_fyp/feature/worker/screens/worker_dashboard.dart';
 import 'package:hire_near_fyp/main.dart';
 import 'package:provider/provider.dart';
 
@@ -115,13 +116,28 @@ class _LoginScreenState extends State<LoginScreen> {
                                     passwordController.text.trim(),
                                   );
 
+                                  // ✅ New — role based navigation
                                   if (context.read<AuthProvider>().isLoggedIn) {
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => MainScreen(),
-                                      ),
-                                    );
+                                    final user = context
+                                        .read<AuthProvider>()
+                                        .currentUser;
+
+                                    if (user?.activeRole == 'worker') {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              WorkerDashboard(),
+                                        ),
+                                      );
+                                    } else {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => MainScreen(),
+                                        ),
+                                      );
+                                    }
                                   }
                                 },
                         ),
