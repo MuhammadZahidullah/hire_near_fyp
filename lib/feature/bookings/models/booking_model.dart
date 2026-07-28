@@ -9,7 +9,7 @@ class BookingModel {
   final String status;
   final String imageUrl;
 
-  BookingModel({
+  const BookingModel({
     required this.id,
     required this.workerName,
     required this.role,
@@ -42,6 +42,35 @@ class BookingModel {
       price: price ?? this.price,
       status: status ?? this.status,
       imageUrl: imageUrl ?? this.imageUrl,
+    );
+  }
+
+  // Firestore
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'workerName': workerName,
+      'role': role,
+      'location': location,
+      'date': date,
+      'time': time,
+      'price': price,
+      'status': status,
+      'imageUrl': imageUrl,
+    };
+  }
+
+  factory BookingModel.fromMap(Map<String, dynamic> map) {
+    return BookingModel(
+      id: map['id'] ?? 0,
+      workerName: map['workerName'] ?? '',
+      role: map['role'] ?? '',
+      location: map['location'] ?? '',
+      date: map['date'] ?? '',
+      time: map['time'] ?? '',
+      price: map['price'] ?? 0,
+      status: map['status'] ?? 'pending',
+      imageUrl: map['imageUrl'] ?? '',
     );
   }
 }

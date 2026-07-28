@@ -109,7 +109,7 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                 children: [
                   // Confirm Button
                   GestureDetector(
-                    onTap: () {
+                    onTap: () async {
                       var newBooking = BookingModel(
                         id: DateTime.now().millisecondsSinceEpoch,
                         workerName: widget.booking.workerName,
@@ -122,7 +122,10 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                         imageUrl: widget.booking.imageUrl,
                       );
 
-                      context.read<BookingProvider>().addBooking(newBooking);
+                      await context.read<BookingProvider>().addBooking(
+                        newBooking,
+                      );
+                      if (!mounted) return;
                       context.read<ProfileProvider>().incrementBookings();
                       context.read<ProfileProvider>().addToTotalSpent(
                         widget.booking.totalAmount.toDouble(),
