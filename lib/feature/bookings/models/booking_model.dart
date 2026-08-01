@@ -1,5 +1,7 @@
 class BookingModel {
+
   final int id;
+  final String? firestoreId;
   final String workerName;
   final String role;
   final String location;
@@ -9,8 +11,9 @@ class BookingModel {
   final String status;
   final String imageUrl;
 
-  const BookingModel({
+  const BookingModel( {
     required this.id,
+    this.firestoreId,
     required this.workerName,
     required this.role,
     required this.location,
@@ -23,6 +26,8 @@ class BookingModel {
 
   BookingModel copyWith({
     int? id,
+    String? firestoreId,
+    
     String? workerName,
     String? role,
     String? location,
@@ -34,6 +39,7 @@ class BookingModel {
   }) {
     return BookingModel(
       id: id ?? this.id,
+      firestoreId: firestoreId ?? this.firestoreId,
       workerName: workerName ?? this.workerName,
       role: role ?? this.role,
       location: location ?? this.location,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hire_near_fyp/core/widgets/app_snack_bar.dart';
-import 'package:hire_near_fyp/feature/bookings/data/booking_data.dart';
 import 'package:hire_near_fyp/feature/bookings/models/booking_model.dart';
 import 'package:hire_near_fyp/feature/bookings/providers/booking_provider.dart';
 import 'package:hire_near_fyp/feature/bookings/widgets/book_now_banner.dart';
@@ -21,6 +20,19 @@ class BookingsScreen extends StatefulWidget {
 class _BookingsScreenState extends State<BookingsScreen> {
   int _selectedTab = 0;
 
+   @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      context.read<BookingProvider>().loadBookings();
+    });
+  }
+
+
+
+
+ 
   // get list based on selected tab
   List<BookingModel> _getCurrentList(BookingProvider provider) {
     switch (_selectedTab) {

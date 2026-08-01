@@ -122,20 +122,26 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                         imageUrl: widget.booking.imageUrl,
                       );
 
-                      await context.read<BookingProvider>().addBooking(
-                        newBooking,
-                      );
+                   try {
+  debugPrint("STEP 1");
+
+  await context.read<BookingProvider>().addBooking(newBooking);
+
+  debugPrint("STEP 2");
+} catch (e) {
+  debugPrint("BOOKING FAILED: $e");
+}
                       if (!mounted) return;
-                      context.read<ProfileProvider>().incrementBookings();
-                      context.read<ProfileProvider>().addToTotalSpent(
-                        widget.booking.totalAmount.toDouble(),
-                      );
-                      // After addBooking
-                      context.read<NotificationProvider>().addNotification(
-                        'Booking Confirmed',
-                        'Your booking with ${widget.booking.workerName} is confirmed',
-                        'booking',
-                      );
+                     context.read<ProfileProvider>().incrementBookings();
+                     context.read<ProfileProvider>().addToTotalSpent(
+                       widget.booking.totalAmount.toDouble(),
+                     );
+                     // After addBooking
+                     context.read<NotificationProvider>().addNotification(
+                       'Booking Confirmed',
+                       'Your booking with ${widget.booking.workerName} is confirmed',
+                       'booking',
+                     );
                       AppSnackBar.showSuccess(
                         context,
                         'Booking Confirmed Successfully!',

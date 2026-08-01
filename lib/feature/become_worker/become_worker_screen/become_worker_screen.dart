@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:hire_near_fyp/feature/auth/providers/auth_provider.dart';
 import 'package:hire_near_fyp/feature/become_worker/widgets/custom_text_feild.dart';
 import 'package:hire_near_fyp/feature/become_worker/widgets/image_upload_box.dart';
 import 'package:hire_near_fyp/feature/become_worker/widgets/intro_card.dart';
 import 'package:hire_near_fyp/feature/become_worker/widgets/section_title.dart';
 import 'package:hire_near_fyp/feature/become_worker/widgets/service_dropdown.dart';
 import 'package:hire_near_fyp/feature/become_worker/widgets/submit_button.dart';
+import 'package:provider/provider.dart';
 
 class BecomeWorkerScreen extends StatefulWidget {
   const BecomeWorkerScreen({super.key});
@@ -167,7 +169,43 @@ class _BecomeWorkerScreenState extends State<BecomeWorkerScreen> {
               SizedBox(height: 8),
 
               // Submit Button
-              SubmitButton(label: 'Submit & Become a Worker', onTap: () {}),
+              //SubmitButton(label: 'Submit & Become a Worker', onTap: () {}),
+              SubmitButton(
+  label: 'Submit & Become a Worker',
+  onTap: () async {
+    final authProvider = context.read<AuthProvider>();
+
+    if (authProvider.currentUser == null) return;
+
+    // final updatedUser = authProvider.currentUser!.copyWith(
+    //   isWorker: true,
+    //   activeRole: 'worker',
+    //   skill: _selectedService,
+    //   experience: _experienceController.text,
+    //   description: _descriptionController.text,
+    //   location: _selectedCity ?? '',
+    // );
+    await authProvider.becomeWorker(
+  skill: _selectedService ?? '',
+  experience: _experienceController.text,
+  price: 0, // change later when you add a price field
+  description: _descriptionController.text,
+);
+
+    // Next step: save this to Firestore
+   // await authProvider.becomeWorker(updatedUser);
+
+if (!mounted) return;
+
+ScaffoldMessenger.of(context).showSnackBar(
+  const SnackBar(
+    content: Text("You are now registered as a worker!"),
+  ),
+);
+
+Navigator.pop(context);
+  },
+),
             ],
           ),
         ),
