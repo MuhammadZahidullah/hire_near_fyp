@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hire_near_fyp/core/widgets/app_snack_bar.dart';
+import 'package:hire_near_fyp/feature/auth/providers/auth_provider.dart';
 import 'package:hire_near_fyp/feature/booking_confirm/models/confirm_booking_model.dart';
 import 'package:hire_near_fyp/feature/booking_confirm/widgets/booking_detail_section.dart';
 //import 'package:hire_near_fyp/feature/booking_confirm/widgets/booking_details_section.dart';
@@ -26,6 +27,7 @@ class ConfirmBookingScreen extends StatefulWidget {
 class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
   @override
   Widget build(BuildContext context) {
+    // final currentUser = context.read<AuthProvider>().currentUser;
     return Scaffold(
       backgroundColor: Color(0xFFF4F6FB),
       body: SafeArea(
@@ -122,26 +124,28 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                         imageUrl: widget.booking.imageUrl,
                       );
 
-                   try {
-  debugPrint("STEP 1");
+                      try {
+                        debugPrint("STEP 1");
 
-  await context.read<BookingProvider>().addBooking(newBooking);
+                        await context.read<BookingProvider>().addBooking(
+                          newBooking,
+                        );
 
-  debugPrint("STEP 2");
-} catch (e) {
-  debugPrint("BOOKING FAILED: $e");
-}
+                        debugPrint("STEP 2");
+                      } catch (e) {
+                        debugPrint("BOOKING FAILED: $e");
+                      }
                       if (!mounted) return;
-                     context.read<ProfileProvider>().incrementBookings();
-                     context.read<ProfileProvider>().addToTotalSpent(
-                       widget.booking.totalAmount.toDouble(),
-                     );
-                     // After addBooking
-                     context.read<NotificationProvider>().addNotification(
-                       'Booking Confirmed',
-                       'Your booking with ${widget.booking.workerName} is confirmed',
-                       'booking',
-                     );
+                      context.read<ProfileProvider>().incrementBookings();
+                      context.read<ProfileProvider>().addToTotalSpent(
+                        widget.booking.totalAmount.toDouble(),
+                      );
+                      // After addBooking
+                      context.read<NotificationProvider>().addNotification(
+                        'Booking Confirmed',
+                        'Your booking with ${widget.booking.workerName} is confirmed',
+                        'booking',
+                      );
                       AppSnackBar.showSuccess(
                         context,
                         'Booking Confirmed Successfully!',

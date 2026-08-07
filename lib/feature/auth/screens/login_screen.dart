@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hire_near_fyp/core/widgets/rounded_button.dart';
 import 'package:hire_near_fyp/feature/auth/providers/auth_provider.dart';
 import 'package:hire_near_fyp/feature/auth/screens/register_screen.dart';
-import 'package:hire_near_fyp/feature/home/screens/home_screen.dart';
 import 'package:hire_near_fyp/feature/home/screens/main_screen.dart';
 import 'package:hire_near_fyp/feature/worker/screens/worker_dashboard.dart';
-import 'package:hire_near_fyp/main.dart';
+import 'package:hire_near_fyp/features/home/widgets/profile/providers/profile_providers.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -115,6 +114,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                     emailController.text.trim(),
                                     passwordController.text.trim(),
                                   );
+
+                                  await context
+                                      .read<ProfileProvider>()
+                                      .loadProfile();
 
                                   // ✅ New — role based navigation
                                   if (context.read<AuthProvider>().isLoggedIn) {

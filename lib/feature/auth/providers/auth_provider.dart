@@ -90,6 +90,9 @@ class AuthProvider extends ChangeNotifier {
 
       // Step 3 — Set current user
       _currentUser = UserModel.fromMap(doc.data() as Map<String, dynamic>);
+      debugPrint("LOGIN USER: ${_currentUser!.name}");
+      debugPrint("LOGIN EMAIL: ${_currentUser!.email}");
+      debugPrint("LOGIN UID: ${_currentUser!.id}");
       _isLoading = false;
       notifyListeners();
     } on FirebaseAuthException catch (e) {
@@ -106,19 +109,19 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-//   Future<void> becomeWorker(UserModel updatedUser) async {
-//   try {
-//     await _firestore
-//         .collection('users')
-//         .doc(updatedUser.id)
-//         .update(updatedUser.toMap());
+  //   Future<void> becomeWorker(UserModel updatedUser) async {
+  //   try {
+  //     await _firestore
+  //         .collection('users')
+  //         .doc(updatedUser.id)
+  //         .update(updatedUser.toMap());
 
-//     _currentUser = updatedUser;
-//     notifyListeners();
-//   } catch (e) {
-//     debugPrint("Become Worker Error: $e");
-//   }
-// }
+  //     _currentUser = updatedUser;
+  //     notifyListeners();
+  //   } catch (e) {
+  //     debugPrint("Become Worker Error: $e");
+  //   }
+  // }
 
   // Check auth state on app start
   Future<void> checkAuthState() async {
@@ -136,41 +139,40 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-
   Future<void> becomeWorker({
-  required String skill,
-  required String experience,
-  required int price,
-  required String description,
-}) async {
-  try {
-    final user = _auth.currentUser;
+    required String skill,
+    required String experience,
+    required int price,
+    required String description,
+  }) async {
+    try {
+      final user = _auth.currentUser;
 
-    if (user == null) return;
+      if (user == null) return;
 
-    await _firestore.collection('users').doc(user.uid).update({
-      'isWorker': true,
-      'activeRole': 'worker',
-      'skill': skill,
-      'experience': experience,
-      'price': price,
-      'description': description,
-    });
+      await _firestore.collection('users').doc(user.uid).update({
+        'isWorker': true,
+        'activeRole': 'worker',
+        'skill': skill,
+        'experience': experience,
+        'price': price,
+        'description': description,
+      });
 
-    _currentUser = _currentUser?.copyWith(
-      isWorker: true,
-      activeRole: 'worker',
-      skill: skill,
-      experience: experience,
-      price: price,
-      description: description,
-    );
+      _currentUser = _currentUser?.copyWith(
+        isWorker: true,
+        activeRole: 'worker',
+        skill: skill,
+        experience: experience,
+        price: price,
+        description: description,
+      );
 
-    notifyListeners();
-  } catch (e) {
-    debugPrint("Become Worker Error: $e");
+      notifyListeners();
+    } catch (e) {
+      debugPrint("Become Worker Error: $e");
+    }
   }
-}
 
   // Firebase error messages
   String _getErrorMessage(String code) {

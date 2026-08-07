@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hire_near_fyp/feature/home/screens/home_screen.dart';
-import 'package:hire_near_fyp/features/home/widgets/profile/profile_screen.dart';
 
 class ButtomNavBar extends StatelessWidget {
   final Function(int) onTap;

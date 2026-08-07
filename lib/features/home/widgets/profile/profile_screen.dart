@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hire_near_fyp/data/models/user_model.dart';
 import 'package:hire_near_fyp/feature/auth/providers/auth_provider.dart';
 import 'package:hire_near_fyp/feature/auth/screens/login_screen.dart';
 import 'package:hire_near_fyp/feature/become_worker/become_worker_screen/become_worker_screen.dart';
@@ -21,12 +20,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // dark mode toggle state
   bool isDarkMode = true;
 
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      context.read<ProfileProvider>().loadProfile();
+    });
+  }
+
   // dummy user data
 
   @override
   Widget build(BuildContext context) {
     final profileProvider = context.watch<ProfileProvider>();
     final user = profileProvider.user;
+
+    if (user == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
 
     return Scaffold(
       backgroundColor: Color(0xFFF4F6FB),

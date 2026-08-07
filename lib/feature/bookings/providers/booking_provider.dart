@@ -14,7 +14,7 @@ class BookingProvider extends ChangeNotifier {
   List<BookingModel> get completeBookings =>
       _bookings.where((b) => b.status == 'completed').toList();
   List<BookingModel> get cancelBooking =>
-      _bookings.where((b) => b.status == 'canceled').toList();
+      _bookings.where((b) => b.status == 'cancelled').toList();
 
   Future<void> addBooking(BookingModel booking) async {
     debugPrint("START ADD BOOKING");
@@ -122,6 +122,11 @@ Future<void> cancelBookings(int id) async {
   } catch (e) {
     debugPrint("Cancel Booking Error: $e");
   }
+}
+
+Future<void> refreshBookings() async {
+  _bookings.clear();
+  await loadBookings();
 }
   }
 

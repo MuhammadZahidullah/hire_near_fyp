@@ -3,6 +3,7 @@ import 'package:hire_near_fyp/core/widgets/rounded_button.dart';
 import 'package:hire_near_fyp/feature/auth/providers/auth_provider.dart';
 import 'package:hire_near_fyp/feature/home/screens/main_screen.dart';
 import 'package:hire_near_fyp/feature/worker/screens/worker_dashboard.dart';
+import 'package:hire_near_fyp/features/home/widgets/profile/providers/profile_providers.dart';
 import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -278,6 +279,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 phoneController.text.trim(),
                                 _selectedRole,
                               );
+                              await context
+                                  .read<ProfileProvider>()
+                                  .loadProfile();
 
                               if (context.read<AuthProvider>().isLoggedIn) {
                                 final user = context
