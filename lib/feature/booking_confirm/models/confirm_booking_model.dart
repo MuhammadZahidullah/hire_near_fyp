@@ -1,4 +1,5 @@
 class ConfirmBookingModel {
+  final String? workerId;
   final String workerName;
   final String workerRole;
   final double workerRating;
@@ -16,6 +17,7 @@ class ConfirmBookingModel {
   int get totalAmount => serviceCharge + bookingFee;
 
   const ConfirmBookingModel({
+    this.workerId,
     required this.workerName,
     required this.workerRole,
     required this.workerRating,

@@ -208,6 +208,7 @@ class CategoryWorkerCartd extends StatelessWidget {
                         MaterialPageRoute(
                           builder: (_) => ConfirmBookingScreen(
                             booking: ConfirmBookingModel(
+                               workerId: worker.workerId,
                               workerName: worker.name,
                               workerRole: worker.role,
                               workerRating: worker.rating,

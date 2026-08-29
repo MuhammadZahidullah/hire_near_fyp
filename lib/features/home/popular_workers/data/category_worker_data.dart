@@ -4,7 +4,7 @@ class CategoryWorkerData {
   static List<CategoryWorkerModel> plumbers = [
     CategoryWorkerModel(
       id: 1,
-      name: 'Usman Ali',
+      name: 'Ijaz Ali',
       role: 'Expert Plumber',
       rating: 4.8,
       reviews: 128,

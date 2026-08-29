@@ -25,9 +25,10 @@ class BookingProvider extends ChangeNotifier {
       debugPrint("BEFORE FIRESTORE");
 
       final docRef = await _firestore.collection('bookings').add({
-        
         'id': booking.id,
         'userId': user.uid,
+        'workerId': booking.workerId,
+        'workerSkill': booking.workerSkill,
         'workerName': booking.workerName,
         'role': booking.role,
         'location': booking.location,
@@ -40,18 +41,14 @@ class BookingProvider extends ChangeNotifier {
       });
       debugPrint("AFTER FIRESTORE");
       debugPrint("ADDING LOCAL");
-     debugPrint("LINE A");
-      _bookings.add(
-  booking.copyWith(
-    firestoreId: docRef.id,
-  ),
-);
+      debugPrint("LINE A");
+      _bookings.add(booking.copyWith(firestoreId: docRef.id));
 
-debugPrint("LINE C");
+      debugPrint("LINE C");
 
-notifyListeners();
-debugPrint("LINE C");
-debugPrint("DONE");
+      notifyListeners();
+      debugPrint("LINE C");
+      debugPrint("DONE");
     } catch (e, stackTrace) {
       debugPrint('==========================');
       debugPrint('BOOKING ERROR: $e');
@@ -62,71 +59,67 @@ debugPrint("DONE");
   }
 
   Future<void> loadBookings() async {
-  try {
-    final user = _auth.currentUser;
+    try {
+      final user = _auth.currentUser;
 
-    if (user == null) return;
+      if (user == null) return;
 
-    final snapshot = await _firestore
-        .collection('bookings')
-        .where('userId', isEqualTo: user.uid)
-        .get();
-
-    _bookings.clear();
-
-    for (var doc in snapshot.docs) {
-      final data = doc.data();
-
-      _bookings.add(
-        BookingModel(
-          id: data['id'] ?? 0,
-           firestoreId: doc.id,
-          workerName: data['workerName'],
-          role: data['role'],
-          location: data['location'],
-          date: data['date'],
-          time: data['time'],
-          price: data['price'],
-          status: data['status'],
-          imageUrl: data['imageUrl'],
-        ),
-      );
-    }
-
-    notifyListeners();
-  } catch (e) {
-    debugPrint("Load Booking Error: $e");
-  }
-}
-
-Future<void> cancelBookings(int id) async {
-  try {
-    final index = _bookings.indexWhere((booking) => booking.id == id);
-
-    if (index == -1) return;
-
-    final booking = _bookings[index];
-
-    // Update Firestore using document ID
-    if (booking.firestoreId != null) {
-      await _firestore
+      final snapshot = await _firestore
           .collection('bookings')
-          .doc(booking.firestoreId)
-          .update({
-        'status': 'cancelled',
-      });
+          .where('userId', isEqualTo: user.uid)
+          .get();
+
+      _bookings.clear();
+
+      for (var doc in snapshot.docs) {
+        final data = doc.data();
+
+        _bookings.add(
+          BookingModel(
+            id: data['id'] ?? 0,
+            firestoreId: doc.id,
+            workerName: data['workerName'],
+            role: data['role'],
+            location: data['location'],
+            date: data['date'],
+            time: data['time'],
+            price: data['price'],
+            status: data['status'],
+            imageUrl: data['imageUrl'],
+          ),
+        );
+      }
+
+      notifyListeners();
+    } catch (e) {
+      debugPrint("Load Booking Error: $e");
     }
+  }
 
-    // Reload latest data
+  Future<void> cancelBookings(int id) async {
+    try {
+      final index = _bookings.indexWhere((booking) => booking.id == id);
+
+      if (index == -1) return;
+
+      final booking = _bookings[index];
+
+      // Update Firestore using document ID
+      if (booking.firestoreId != null) {
+        await _firestore.collection('bookings').doc(booking.firestoreId).update(
+          {'status': 'cancelled'},
+        );
+      }
+
+      // Reload latest data
+      await loadBookings();
+    } catch (e) {
+      debugPrint("Cancel Booking Error: $e");
+    }
+  }
+
+  Future<void> refreshBookings() async {
+    _bookings.clear();
     await loadBookings();
-  } catch (e) {
-    debugPrint("Cancel Booking Error: $e");
   }
 }
-
-Future<void> refreshBookings() async {
-  _bookings.clear();
-  await loadBookings();
-}
-  }
-

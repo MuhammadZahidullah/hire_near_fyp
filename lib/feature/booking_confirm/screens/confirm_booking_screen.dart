@@ -114,6 +114,10 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                     onTap: () async {
                       var newBooking = BookingModel(
                         id: DateTime.now().millisecondsSinceEpoch,
+
+                        workerId: widget.booking.workerId,
+                        workerSkill: widget.booking.workerRole,
+
                         workerName: widget.booking.workerName,
                         role: widget.booking.workerRole,
                         location: widget.booking.location,
