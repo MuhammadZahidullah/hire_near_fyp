@@ -32,11 +32,15 @@ class AuthProvider extends ChangeNotifier {
       _errorMessage = null;
       notifyListeners();
 
+      debugPrint('=== [AuthProvider.register] Starting registration for $email ===');
+
       // Step 1 — Create Firebase Auth user
       UserCredential credential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+
+      debugPrint('=== [AuthProvider.register] Auth created user UID: ${credential.user?.uid} ===');
 
       // Step 2 — Create UserModel
       UserModel newUser = UserModel(
@@ -53,18 +57,36 @@ class AuthProvider extends ChangeNotifier {
       );
 
       // Step 3 — Save to Firestore
+      debugPrint('=== [AuthProvider.register] Before Firestore .set() on doc users/${credential.user!.uid} ===');
+      debugPrint('=== [AuthProvider.register] Data payload: ${newUser.toMap()} ===');
+
       await _firestore
           .collection('users')
           .doc(credential.user!.uid)
           .set(newUser.toMap());
 
+      debugPrint('=== [AuthProvider.register] After Firestore .set() - Document created successfully ===');
+
       // Step 4 — Set current user
       _currentUser = newUser;
-      _isLoading = false;
-      notifyListeners();
     } on FirebaseAuthException catch (e) {
-      _isLoading = false;
+      debugPrint('=== [AuthProvider.register] FirebaseAuthException caught ===');
+      debugPrint('Code: ${e.code}');
+      debugPrint('Message: ${e.message}');
       _errorMessage = _getErrorMessage(e.code);
+    } on FirebaseException catch (e) {
+      debugPrint('=== [AuthProvider.register] FirebaseException caught ===');
+      debugPrint('Plugin: ${e.plugin}');
+      debugPrint('Code: ${e.code}');
+      debugPrint('Message: ${e.message}');
+      _errorMessage = e.message ?? 'Database error: ${e.code}';
+    } catch (e, stackTrace) {
+      debugPrint('=== [AuthProvider.register] Generic Exception caught ===');
+      debugPrint('Error: $e');
+      debugPrint('StackTrace: $stackTrace');
+      _errorMessage = 'Registration failed: ${e.toString()}';
+    } finally {
+      _isLoading = false;
       notifyListeners();
     }
   }

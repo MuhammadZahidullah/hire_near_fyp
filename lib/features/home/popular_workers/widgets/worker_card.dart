@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:hire_near_fyp/features/home/popular_workers/models/worker_model.dart';
+import 'package:hire_near_fyp/features/home/popular_workers/models/category_worker_model.dart';
 
 class WorkerCard extends StatelessWidget {
   final VoidCallback onTap;
-  final WorkerModel worker;
+  final CategoryWorkerModel worker;
   const WorkerCard({super.key, required this.onTap, required this.worker});
 
   @override
@@ -27,7 +27,16 @@ class WorkerCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          CircleAvatar(radius: 30, backgroundColor: Colors.grey.shade200),
+          CircleAvatar(
+            radius: 30,
+            backgroundColor: Colors.grey.shade200,
+            backgroundImage: (worker.imageUrl.isNotEmpty && worker.imageUrl.startsWith('http'))
+                ? NetworkImage(worker.imageUrl)
+                : null,
+            child: (worker.imageUrl.isEmpty || !worker.imageUrl.startsWith('http'))
+                ? Icon(Icons.person, size: 30, color: Colors.grey)
+                : null,
+          ),
 
           SizedBox(width: 12),
           Expanded(
@@ -71,7 +80,7 @@ class WorkerCard extends StatelessWidget {
                   Icon(Icons.star, color: Colors.amber, size: 17),
                   SizedBox(width: 4),
                   Text(
-                    worker.ratting.toString(),
+                    worker.rating.toString(),
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -97,3 +106,4 @@ class WorkerCard extends StatelessWidget {
     );
   }
 }
+

@@ -4,7 +4,7 @@ import 'package:hire_near_fyp/data/dummy/categary_data.dart';
 import 'package:hire_near_fyp/feature/become_worker/become_worker_screen/become_worker_screen.dart';
 import 'package:hire_near_fyp/feature/category/screens/category_screen.dart';
 import 'package:hire_near_fyp/feature/search/providers/search_provider.dart';
-import 'package:hire_near_fyp/features/home/popular_workers/data/worker_data.dart';
+import 'package:hire_near_fyp/feature/worker/providers/worker_provider.dart';
 import 'package:hire_near_fyp/features/home/popular_workers/widgets/popular_workers_section.dart';
 import 'package:hire_near_fyp/features/home/popular_workers/widgets/top_bar.dart';
 import 'package:hire_near_fyp/features/home/widgets/become_worker_banner.dart';
@@ -22,11 +22,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    // Search Provider
+    // Providers
     final profileProvider = context.watch<ProfileProvider>();
+    final workerProvider = context.watch<WorkerProvider>();
     final searchProvider = context.watch<SearchProvider>();
-    final filteredWorkers = searchProvider.getFilteredWorkers(
-      WorkerData.workerList,
+    final filteredWorkers = searchProvider.getFilteredCategoryWorkers(
+      workerProvider.popularWorkers,
     );
 
     return Scaffold(
@@ -94,40 +95,75 @@ class _HomeScreenState extends State<HomeScreen> {
 
             SizedBox(height: 8),
 
-            // 4 - Popular Workers or Empty State
-            filteredWorkers.isEmpty
-                ? Padding(
-                    padding: EdgeInsets.all(20),
-                    child: Center(
-                      child: Column(
-                        children: [
-                          Icon(
-                            Icons.search_off,
-                            size: 60,
-                            color: Colors.grey.shade300,
-                          ),
-                          SizedBox(height: 12),
-                          Text(
-                            'No workers found',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            'Try searching with different keywords',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.grey.shade400,
-                            ),
-                          ),
-                        ],
+            // 4 - Popular Workers or Empty / Loading / Error State
+            if (workerProvider.isLoading)
+              Padding(
+                padding: EdgeInsets.all(32),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: Color(0xFF6C3CE1),
+                  ),
+                ),
+              )
+            else if (workerProvider.errorMessage != null &&
+                workerProvider.popularWorkers.isEmpty)
+              Padding(
+                padding: EdgeInsets.all(20),
+                child: Center(
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        size: 50,
+                        color: Colors.redAccent,
                       ),
-                    ),
-                  )
-                : PopularWorkersSection(workers: filteredWorkers),
+                      SizedBox(height: 8),
+                      Text(
+                        'Failed to load workers',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            else if (filteredWorkers.isEmpty)
+              Padding(
+                padding: EdgeInsets.all(20),
+                child: Center(
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.search_off,
+                        size: 60,
+                        color: Colors.grey.shade300,
+                      ),
+                      SizedBox(height: 12),
+                      Text(
+                        'No workers found',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Try searching with different keywords',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey.shade400,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            else
+              PopularWorkersSection(workers: filteredWorkers),
 
             // 5 - Become Worker Banner
             BecomeWorkerBanner(

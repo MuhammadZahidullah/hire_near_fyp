@@ -9,6 +9,7 @@ import 'package:hire_near_fyp/feature/review/providers/review_provider.dart';
 import 'package:hire_near_fyp/feature/search/providers/search_provider.dart';
 import 'package:hire_near_fyp/feature/splash/screens/splash_screen.dart';
 import 'package:hire_near_fyp/feature/worker/providers/worker_dashboard_provider.dart';
+import 'package:hire_near_fyp/feature/worker/providers/worker_provider.dart';
 import 'package:hire_near_fyp/features/home/widgets/profile/providers/profile_providers.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => SearchProvider()),
         ChangeNotifierProvider(create: (_) => CategoryProvider()),
         ChangeNotifierProvider(create: (_) => WorkerDashboardProvider()),
+        ChangeNotifierProvider(create: (_) => WorkerProvider()..fetchWorkers()),
 
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
         ChangeNotifierProvider(create: (_) => ReviewProvider()),
