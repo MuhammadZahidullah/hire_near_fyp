@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hire_near_fyp/feature/notifications/providers/notification_provider.dart';
+import 'package:hire_near_fyp/feature/notifications/screens/notifications_screen.dart';
 import 'package:provider/provider.dart';
 
 class TopBar extends StatelessWidget {
@@ -50,30 +51,40 @@ class TopBar extends StatelessWidget {
               ],
             ),
           ),
-          Stack(
-            children: [
-              Icon(Icons.notifications_outlined, size: 28, color: Colors.black),
-              Positioned(
-                right: 0,
-                top: 0,
-
-                child: Container(
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Text(
-                    notificationProvider.unreadCount.toString(),
-
-                    style: TextStyle(color: Colors.white, fontSize: 10),
-                  ),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const NotificationsScreen(),
                 ),
-              ),
-            ],
+              );
+            },
+            child: Stack(
+              children: [
+                Icon(Icons.notifications_outlined, size: 28, color: Colors.black),
+                if (notificationProvider.hasUnread)
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: Container(
+                      padding: EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        notificationProvider.unreadCount.toString(),
+                        style: TextStyle(color: Colors.white, fontSize: 10),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 }
+

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart' hide AuthProvider;
 import 'package:flutter/material.dart';
 import 'package:hire_near_fyp/core/widgets/app_snack_bar.dart';
 import 'package:hire_near_fyp/feature/auth/providers/auth_provider.dart';
@@ -27,7 +28,6 @@ class ConfirmBookingScreen extends StatefulWidget {
 class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
   @override
   Widget build(BuildContext context) {
-    // final currentUser = context.read<AuthProvider>().currentUser;
     return Scaffold(
       backgroundColor: Color(0xFFF4F6FB),
       body: SafeArea(
@@ -47,7 +47,7 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                         borderRadius: BorderRadius.circular(10),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.1),
+                            color: Colors.grey.withValues(alpha: 0.1),
                             blurRadius: 4,
                             offset: Offset(0, 2),
                           ),
@@ -112,12 +112,40 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                   // Confirm Button
                   GestureDetector(
                     onTap: () async {
+                      final authUser = context.read<AuthProvider>().currentUser;
+                      final firebaseUser = FirebaseAuth.instance.currentUser;
+
+                      final customerId = firebaseUser?.uid ?? authUser?.id;
+                      final customerName = (authUser != null && authUser.name.trim().isNotEmpty)
+                          ? authUser.name.trim()
+                          : (firebaseUser?.displayName?.trim().isNotEmpty == true
+                              ? firebaseUser!.displayName!.trim()
+                              : null);
+                      final customerEmail = (authUser != null && authUser.email.trim().isNotEmpty)
+                          ? authUser.email.trim()
+                          : (firebaseUser?.email?.trim().isNotEmpty == true
+                              ? firebaseUser!.email!.trim()
+                              : null);
+                      final customerPhone = (authUser != null && authUser.phone.trim().isNotEmpty)
+                          ? authUser.phone.trim()
+                          : (firebaseUser?.phoneNumber?.trim().isNotEmpty == true
+                              ? firebaseUser!.phoneNumber!.trim()
+                              : null);
+                      final customerLocation = widget.booking.location.trim().isNotEmpty
+                          ? widget.booking.location.trim()
+                          : (authUser != null && authUser.location.trim().isNotEmpty
+                              ? authUser.location.trim()
+                              : null);
+
                       var newBooking = BookingModel(
                         id: DateTime.now().millisecondsSinceEpoch,
-
+                        userId: customerId,
+                        customerName: customerName,
+                        customerEmail: customerEmail,
+                        customerPhone: customerPhone,
+                        customerLocation: customerLocation,
                         workerId: widget.booking.workerId,
                         workerSkill: widget.booking.workerRole,
-
                         workerName: widget.booking.workerName,
                         role: widget.booking.workerRole,
                         location: widget.booking.location,

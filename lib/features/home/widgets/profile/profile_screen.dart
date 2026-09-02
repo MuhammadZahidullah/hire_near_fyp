@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hire_near_fyp/feature/auth/providers/auth_provider.dart';
 import 'package:hire_near_fyp/feature/auth/screens/login_screen.dart';
 import 'package:hire_near_fyp/feature/become_worker/become_worker_screen/become_worker_screen.dart';
+import 'package:hire_near_fyp/feature/notifications/screens/notifications_screen.dart';
+import 'package:hire_near_fyp/feature/worker/screens/worker_dashboard.dart';
 import 'package:hire_near_fyp/features/home/widgets/profile/menu_item_tile.dart';
 import 'package:hire_near_fyp/features/home/widgets/profile/menu_section.dart';
 import 'package:hire_near_fyp/features/home/widgets/profile/profil_hero_card.dart';
@@ -40,8 +42,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
+    final isWorker = user.isWorker == true || user.activeRole == 'worker';
+
     return Scaffold(
-      backgroundColor: Color(0xFFF4F6FB),
+      backgroundColor: const Color(0xFFF4F6FB),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
@@ -63,19 +67,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 16),
 
               WorkerBanner(
+                isWorker: isWorker,
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => BecomeWorkerScreen(),
-                    ),
-                  );
+                  if (isWorker) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const WorkerDashboard(),
+                      ),
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const BecomeWorkerScreen(),
+                      ),
+                    );
+                  }
                 },
               ),
               const SizedBox(height: 24),
 
               MenuSection(
                 items: [
+                  if (isWorker)
+                    MenuItemTile(
+                      icon: Icons.dashboard_outlined,
+                      label: 'Worker Dashboard',
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const WorkerDashboard(),
+                          ),
+                        );
+                      },
+                    ),
                   MenuItemTile(
                     icon: Icons.person_outline,
                     label: 'Persnal Information',
@@ -114,13 +141,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       value: isDarkMode,
                       onChanged: (val) => setState(() => isDarkMode = val),
 
-                      activeColor: Color(0xFF5B3FE4),
+                      activeThumbColor: Color(0xFF5B3FE4),
                     ),
                   ),
                   MenuItemTile(
                     icon: Icons.notifications_outlined,
                     label: 'Notifications',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const NotificationsScreen(),
+                        ),
+                      );
+                    },
                   ),
                   MenuItemTile(
                     icon: Icons.language,

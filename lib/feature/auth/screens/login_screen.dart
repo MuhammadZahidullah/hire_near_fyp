@@ -125,12 +125,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                         .read<AuthProvider>()
                                         .currentUser;
 
-                                    if (user?.activeRole == 'worker') {
+                                    if (user?.activeRole == 'worker' ||
+                                        user?.isWorker == true) {
                                       Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) =>
-                                              WorkerDashboard(),
+                                              const WorkerDashboard(),
                                         ),
                                       );
                                     } else {

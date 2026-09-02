@@ -73,7 +73,7 @@ class BookingTabBar extends StatelessWidget {
             boxShadow: isActive
                 ? [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.15),
+                      color: Colors.grey.withValues(alpha: 0.15),
                       blurRadius: 4,
                       offset: Offset(0, 2),
                     ),

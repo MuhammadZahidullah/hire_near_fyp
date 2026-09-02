@@ -5,6 +5,7 @@ import 'package:hire_near_fyp/feature/category/widgets/category_top_bar.dart';
 import 'package:hire_near_fyp/feature/category/widgets/filter_chips_row.dart';
 import 'package:hire_near_fyp/feature/category/widgets/post_job_banner.dart';
 import 'package:hire_near_fyp/feature/search/providers/search_provider.dart';
+import 'package:hire_near_fyp/feature/worker/providers/worker_provider.dart';
 import 'package:hire_near_fyp/features/home/popular_workers/models/category_worker_model.dart';
 import 'package:hire_near_fyp/features/home/widgets/buttom_nav_bar.dart';
 import 'package:hire_near_fyp/features/home/widgets/category_worker_cartd.dart';
@@ -16,7 +17,7 @@ class CategoryScreen extends StatefulWidget {
   final IconData categoryIcon;
   final Color iconColor;
   final Color iconBgColor;
-  final List<CategoryWorkerModel> workers;
+  final List<CategoryWorkerModel>? workers;
   const CategoryScreen({
     super.key,
     required this.categoryName,
@@ -24,7 +25,7 @@ class CategoryScreen extends StatefulWidget {
     required this.categoryIcon,
     required this.iconColor,
     required this.iconBgColor,
-    required this.workers,
+    this.workers,
   });
 
   @override
@@ -33,6 +34,18 @@ class CategoryScreen extends StatefulWidget {
 
 class _CategoryScreenState extends State<CategoryScreen> {
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final wp = context.read<WorkerProvider>();
+      if (wp.workers.isEmpty && !wp.isLoading) {
+        wp.fetchWorkers();
+      }
+    });
+  }
+
   @override
   void dispose() {
     context.read<SearchProvider>().clearSearch();
@@ -42,9 +55,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final workerProvider = context.watch<WorkerProvider>();
+    final categoryWorkers = workerProvider.getWorkersByCategory(
+      widget.categoryName,
+    );
+
     final searchProvider = context.watch<SearchProvider>();
     final filteredWorkers = searchProvider.getFilteredCategoryWorkers(
-      widget.workers,
+      categoryWorkers,
     );
     // Category Provider
     final categoryProvider = context.watch<CategoryProvider>();
@@ -60,7 +78,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
           });
         },
       ),
-      backgroundColor: Color(0xFFF5F5F5),
+      backgroundColor: const Color(0xFFF5F5F5),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -88,42 +106,90 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 },
               ),
 
-              // ✅ New
-              sortedWorkers.isEmpty
-                  ? Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Center(
-                        child: Column(
-                          children: [
-                            Icon(
-                              Icons.search_off,
-                              size: 60,
-                              color: Colors.grey.shade300,
-                            ),
-                            SizedBox(height: 12),
-                            Text(
-                              'No workers found',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: sortedWorkers.length,
-                      itemBuilder: (context, index) {
-                        return CategoryWorkerCartd(
-                          worker: sortedWorkers[index],
-                          onTap: () {},
-                        );
-                      },
+              if (workerProvider.isLoading)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 40),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: Color(0xFF6C3CE1),
                     ),
+                  ),
+                )
+              else if (workerProvider.errorMessage != null &&
+                  categoryWorkers.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Center(
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          size: 60,
+                          color: Colors.red.shade300,
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          workerProvider.errorMessage ??
+                              'Failed to load workers',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.red.shade400,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF6C3CE1),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          onPressed: () =>
+                              context.read<WorkerProvider>().fetchWorkers(),
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              else if (sortedWorkers.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Center(
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.search_off,
+                          size: 60,
+                          color: Colors.grey.shade300,
+                        ),
+                        const SizedBox(height: 12),
+                        const Text(
+                          'No workers found',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              else
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: sortedWorkers.length,
+                  itemBuilder: (context, index) {
+                    return CategoryWorkerCartd(
+                      worker: sortedWorkers[index],
+                      onTap: () {},
+                    );
+                  },
+                ),
 
               PostJobBanner(
                 title: 'Can\'t find the right ${widget.categoryName}?',

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:hire_near_fyp/feature/auth/providers/auth_provider.dart';
 import 'package:hire_near_fyp/feature/auth/screens/login_screen.dart';
 import 'package:hire_near_fyp/feature/home/screens/main_screen.dart';
+import 'package:hire_near_fyp/feature/worker/screens/worker_dashboard.dart';
+import 'package:hire_near_fyp/features/home/widgets/profile/providers/profile_providers.dart';
 import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -26,14 +28,25 @@ class _SplashScreenState extends State<SplashScreen> {
       if (!mounted) return;
 
       if (authProvider.isLoggedIn) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => MainScreen()),
-        );
+        final user = authProvider.currentUser;
+        final isWorker = user?.activeRole == 'worker' || user?.isWorker == true;
+
+        if (isWorker) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const WorkerDashboard()),
+          );
+        } else {
+          context.read<ProfileProvider>().loadProfile();
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => MainScreen()),
+          );
+        }
       } else {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => LoginScreen()),
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
         );
       }
     });

@@ -7,6 +7,7 @@ import 'package:hire_near_fyp/feature/bookings/widgets/booking_card.dart';
 import 'package:hire_near_fyp/feature/bookings/widgets/booking_section_title.dart';
 import 'package:hire_near_fyp/feature/bookings/widgets/booking_tab_bar.dart';
 import 'package:hire_near_fyp/feature/notifications/providers/notification_provider.dart';
+import 'package:hire_near_fyp/feature/notifications/screens/notifications_screen.dart';
 import 'package:hire_near_fyp/feature/review/widgets/add_reveiw_sheet.dart';
 import 'package:provider/provider.dart';
 
@@ -20,19 +21,14 @@ class BookingsScreen extends StatefulWidget {
 class _BookingsScreenState extends State<BookingsScreen> {
   int _selectedTab = 0;
 
-   @override
+  @override
   void initState() {
     super.initState();
-
-    Future.microtask(() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<BookingProvider>().loadBookings();
     });
   }
 
-
-
-
- 
   // get list based on selected tab
   List<BookingModel> _getCurrentList(BookingProvider provider) {
     switch (_selectedTab) {
@@ -51,11 +47,11 @@ class _BookingsScreenState extends State<BookingsScreen> {
   String get _sectionTitle {
     switch (_selectedTab) {
       case 0:
-        return 'PENDING';
+        return 'PENDING & ACTIVE';
       case 1:
         return 'COMPLETED';
       case 2:
-        return 'CANCELLED';
+        return 'CANCELLED / REJECTED';
       default:
         return 'PENDING';
     }
@@ -78,22 +74,24 @@ class _BookingsScreenState extends State<BookingsScreen> {
   @override
   Widget build(BuildContext context) {
     final bookingProvider = context.watch<BookingProvider>();
+    final notificationProvider = context.watch<NotificationProvider>();
     final currentList = _getCurrentList(bookingProvider);
+
     return Scaffold(
-      backgroundColor: Color(0xFFF4F6FB),
+      backgroundColor: const Color(0xFFF4F6FB),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header
             Padding(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                    children: const [
                       Text(
                         'My Bookings',
                         style: TextStyle(
@@ -109,29 +107,43 @@ class _BookingsScreenState extends State<BookingsScreen> {
                     ],
                   ),
                   // Notification Bell
-                  Stack(
-                    children: [
-                      Icon(
-                        Icons.notifications_outlined,
-                        size: 28,
-                        color: Colors.black,
-                      ),
-                      Positioned(
-                        right: 0,
-                        top: 0,
-                        child: Container(
-                          padding: EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: Color(0xFF6C3CE1),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Text(
-                            '3',
-                            style: TextStyle(color: Colors.white, fontSize: 10),
-                          ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const NotificationsScreen(),
                         ),
-                      ),
-                    ],
+                      );
+                    },
+                    child: Stack(
+                      children: [
+                        const Icon(
+                          Icons.notifications_outlined,
+                          size: 28,
+                          color: Colors.black,
+                        ),
+                        if (notificationProvider.hasUnread)
+                          Positioned(
+                            right: 0,
+                            top: 0,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF6C3CE1),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Text(
+                                notificationProvider.unreadCount.toString(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -152,101 +164,147 @@ class _BookingsScreenState extends State<BookingsScreen> {
 
             // Content
             Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Section Title
-                    BookingSectionTitle(
-                      title: _sectionTitle,
-                      count: currentList.length,
-                      color: _sectionColor,
-                    ),
+              child: RefreshIndicator(
+                color: const Color(0xFF6C3CE1),
+                onRefresh: () => context.read<BookingProvider>().loadBookings(),
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Section Title
+                      BookingSectionTitle(
+                        title: _sectionTitle,
+                        count: currentList.length,
+                        color: _sectionColor,
+                      ),
 
-                    // Booking Cards
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: currentList.length,
-                      itemBuilder: (context, index) {
-                        return BookingCard(
-                          booking: currentList[index],
-                          onTap: () {
-                            // Pending
-                            if (currentList[index].status == 'pending') {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: Text('Cancel Booking'),
-                                  content: Text(
-                                    'Are you sure you want to cancel booking with ${currentList[index].workerName}?',
+                      if (bookingProvider.isLoading)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 40),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: Color(0xFF6C3CE1),
+                            ),
+                          ),
+                        )
+                      else if (currentList.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 40),
+                          child: Center(
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.calendar_today_outlined,
+                                  size: 50,
+                                  color: Colors.grey.shade300,
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  'No ${_sectionTitle.toLowerCase()} bookings found',
+                                  style: const TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 14,
                                   ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: Text('No'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      else
+                        // Booking Cards
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: currentList.length,
+                          itemBuilder: (context, index) {
+                            final booking = currentList[index];
+
+                            return BookingCard(
+                              booking: booking,
+                              onTap: () {
+                                // Pending or Accepted
+                                if (booking.status == 'pending' ||
+                                    booking.status == 'accepted') {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: Text(
+                                        booking.status == 'accepted'
+                                            ? 'Cancel Accepted Booking'
+                                            : 'Cancel Booking',
+                                      ),
+                                      content: Text(
+                                        'Are you sure you want to cancel booking with ${booking.workerName}?',
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: const Text('No'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () async {
+                                            Navigator.pop(context);
+                                            await context
+                                                .read<BookingProvider>()
+                                                .cancelBookings(booking.id);
+                                            if (context.mounted) {
+                                              context
+                                                  .read<NotificationProvider>()
+                                                  .addNotification(
+                                                    'Booking Cancelled',
+                                                    'Your booking with ${booking.workerName} has been cancelled',
+                                                    'cancel',
+                                                  );
+                                              AppSnackBar.showWarning(
+                                                context,
+                                                'Booking Cancelled',
+                                              );
+                                            }
+                                          },
+                                          child: const Text(
+                                            'Yes, Cancel',
+                                            style: TextStyle(color: Colors.red),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                        context
-                                            .read<BookingProvider>()
-                                            .cancelBookings(
-                                              currentList[index].id,
-                                            );
-                                        context
-                                            .read<NotificationProvider>()
-                                            .addNotification(
-                                              'Booking Cancelled',
-                                              'Your booking with ${currentList[index].workerName} has been cancelled',
-                                              'cancel',
-                                            );
-                                        AppSnackBar.showWarning(
-                                          context,
-                                          'Booking Cancelled',
-                                        );
-                                      },
-                                      child: Text(
-                                        'Yes, Cancel',
-                                        style: TextStyle(color: Colors.red),
+                                  );
+                                }
+                                // Completed
+                                else if (booking.status == 'completed') {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(20),
                                       ),
                                     ),
-                                  ],
-                                ),
-                              );
-                            }
-                            // Completed ← inside onTap
-                            else if (currentList[index].status == 'completed') {
-                              showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(20),
-                                  ),
-                                ),
-                                builder: (context) => AddReviewSheet(
-                                  workerId: currentList[index].id,
-                                  workerName: currentList[index].workerName,
-                                  userName: 'Muhammad Zahidullah',
-                                ),
-                              );
-                            }
-                            // Cancelled ← inside onTap
-                            else {
-                              AppSnackBar.showWarning(
-                                context,
-                                'This booking was cancelled',
-                              );
-                            }
-                          }, // ← onTap closes here
-                        ); // ← BookingCard closes here
-                      },
-                    ),
+                                    builder: (context) => AddReviewSheet(
+                                      workerId: booking.id,
+                                      workerName: booking.workerName,
+                                      userName: 'Muhammad Zahidullah',
+                                    ),
+                                  );
+                                }
+                                // Cancelled / Rejected
+                                else {
+                                  AppSnackBar.showWarning(
+                                    context,
+                                    'This booking was ${booking.status}',
+                                  );
+                                }
+                              },
+                            );
+                          },
+                        ),
 
-                    // Book Now Banner
-                    BookNowBanner(onTap: () {}),
-                  ],
+                      // Book Now Banner
+                      BookNowBanner(onTap: () {}),
+                    ],
+                  ),
                 ),
               ),
             ),

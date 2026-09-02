@@ -20,13 +20,54 @@ class WorkerProvider extends ChangeNotifier {
   // Popular workers getter
   List<CategoryWorkerModel> get popularWorkers => _categoryWorkers;
 
+  // Primary category keys (corresponding to the 7 main home categories)
+  static const List<String> _primaryCategoryKeys = [
+    'plumb',
+    'mason',
+    'elect',
+    'carpent',
+    'clean',
+    'driv',
+    'mechan',
+  ];
+
   // Filter workers by category title / skill
   List<CategoryWorkerModel> getWorkersByCategory(String categoryTitle) {
-    if (categoryTitle.trim().isEmpty || categoryTitle.toLowerCase() == 'all') {
+    final cleanCategory = categoryTitle.trim().toLowerCase();
+    if (cleanCategory.isEmpty || cleanCategory == 'all') {
       return _categoryWorkers;
     }
+
+    String normalize(String s) {
+      final str = s.toLowerCase().trim();
+      if (str.contains('pulum') || str.contains('plumb')) return 'plumb';
+      if (str.contains('messo') || str.contains('mason')) return 'mason';
+      if (str.contains('elect')) return 'elect';
+      if (str.contains('carpent')) return 'carpent';
+      if (str.contains('clean')) return 'clean';
+      if (str.contains('driv')) return 'driv';
+      if (str.contains('mechan')) return 'mechan';
+      return str;
+    }
+
+    // 'More' represents additional / extra skills outside the 7 primary categories
+    if (cleanCategory == 'more') {
+      return _categoryWorkers.where((worker) {
+        final roleNorm = normalize(worker.role);
+        final isPrimary = _primaryCategoryKeys.any(
+          (key) => roleNorm.contains(key),
+        );
+        return !isPrimary;
+      }).toList();
+    }
+
+    final target = normalize(cleanCategory);
+
     return _categoryWorkers.where((worker) {
-      return worker.role.toLowerCase().contains(categoryTitle.toLowerCase());
+      final roleNorm = normalize(worker.role);
+      return roleNorm.contains(target) ||
+          target.contains(roleNorm) ||
+          worker.role.toLowerCase().contains(cleanCategory);
     }).toList();
   }
 

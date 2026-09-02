@@ -288,11 +288,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     .read<AuthProvider>()
                                     .currentUser;
 
-                                if (user?.activeRole == 'worker') {
+                                if (user?.activeRole == 'worker' ||
+                                    user?.isWorker == true) {
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => WorkerDashboard(),
+                                      builder: (context) =>
+                                          const WorkerDashboard(),
                                     ),
                                   );
                                 } else {

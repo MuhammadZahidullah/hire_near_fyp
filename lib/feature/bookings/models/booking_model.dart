@@ -1,13 +1,14 @@
 class BookingModel {
-
   final int id;
   final String? userId;
 
-final String? customerName;
-final String? customerEmail;
+  final String? customerName;
+  final String? customerEmail;
+  final String? customerPhone;
+  final String? customerLocation;
 
-final String? workerId;
-final String? workerSkill;
+  final String? workerId;
+  final String? workerSkill;
   final String? firestoreId;
   final String workerName;
   final String role;
@@ -18,11 +19,13 @@ final String? workerSkill;
   final String status;
   final String imageUrl;
 
-  const BookingModel( {
+  const BookingModel({
     required this.id,
     this.userId,
     this.customerName,
     this.customerEmail,
+    this.customerPhone,
+    this.customerLocation,
     this.workerId,
     this.workerSkill,
     this.firestoreId,
@@ -39,14 +42,13 @@ final String? workerSkill;
   BookingModel copyWith({
     int? id,
     String? userId,
-
-String? customerName,
-String? customerEmail,
-
-String? workerId,
-String? workerSkill,
+    String? customerName,
+    String? customerEmail,
+    String? customerPhone,
+    String? customerLocation,
+    String? workerId,
+    String? workerSkill,
     String? firestoreId,
-    
     String? workerName,
     String? role,
     String? location,
@@ -59,12 +61,12 @@ String? workerSkill,
     return BookingModel(
       id: id ?? this.id,
       userId: userId ?? this.userId,
-
-customerName: customerName ?? this.customerName,
-customerEmail: customerEmail ?? this.customerEmail,
-
-workerId: workerId ?? this.workerId,
-workerSkill: workerSkill ?? this.workerSkill,
+      customerName: customerName ?? this.customerName,
+      customerEmail: customerEmail ?? this.customerEmail,
+      customerPhone: customerPhone ?? this.customerPhone,
+      customerLocation: customerLocation ?? this.customerLocation,
+      workerId: workerId ?? this.workerId,
+      workerSkill: workerSkill ?? this.workerSkill,
       firestoreId: firestoreId ?? this.firestoreId,
       workerName: workerName ?? this.workerName,
       role: role ?? this.role,
@@ -82,12 +84,12 @@ workerSkill: workerSkill ?? this.workerSkill,
     return {
       'id': id,
       'userId': userId,
-
-'customerName': customerName,
-'customerEmail': customerEmail,
-
-'workerId': workerId,
-'workerSkill': workerSkill,
+      'customerName': customerName,
+      'customerEmail': customerEmail,
+      'customerPhone': customerPhone,
+      'customerLocation': customerLocation,
+      'workerId': workerId,
+      'workerSkill': workerSkill,
       'workerName': workerName,
       'role': role,
       'location': location,
@@ -102,13 +104,13 @@ workerSkill: workerSkill ?? this.workerSkill,
   factory BookingModel.fromMap(Map<String, dynamic> map) {
     return BookingModel(
       id: map['id'] ?? 0,
-      userId: map['userId'],
-
-customerName: map['customerName'],
-customerEmail: map['customerEmail'],
-
-workerId: map['workerId'],
-workerSkill: map['workerSkill'],
+      userId: map['userId'] ?? map['customerId'],
+      customerName: map['customerName'],
+      customerEmail: map['customerEmail'],
+      customerPhone: map['customerPhone'] ?? map['phone'],
+      customerLocation: map['customerLocation'] ?? map['location'],
+      workerId: map['workerId'],
+      workerSkill: map['workerSkill'],
       workerName: map['workerName'] ?? '',
       role: map['role'] ?? '',
       location: map['location'] ?? '',

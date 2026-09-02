@@ -147,17 +147,27 @@ class AuthProvider extends ChangeNotifier {
 
   // Check auth state on app start
   Future<void> checkAuthState() async {
-    final firebaseUser = _auth.currentUser;
-    if (firebaseUser != null) {
-      DocumentSnapshot doc = await _firestore
-          .collection('users')
-          .doc(firebaseUser.uid)
-          .get();
+    try {
+      final firebaseUser = _auth.currentUser;
+      if (firebaseUser != null) {
+        DocumentSnapshot doc = await _firestore
+            .collection('users')
+            .doc(firebaseUser.uid)
+            .get();
 
-      if (doc.exists) {
-        _currentUser = UserModel.fromMap(doc.data() as Map<String, dynamic>);
-        notifyListeners();
+        if (doc.exists && doc.data() != null) {
+          _currentUser = UserModel.fromMap(doc.data() as Map<String, dynamic>);
+        } else {
+          _currentUser = null;
+        }
+      } else {
+        _currentUser = null;
       }
+    } catch (e) {
+      debugPrint("checkAuthState error: $e");
+      _currentUser = null;
+    } finally {
+      notifyListeners();
     }
   }
 

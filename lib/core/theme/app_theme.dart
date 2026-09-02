@@ -21,7 +21,7 @@ class AppTheme {
     ),
 
     appBarTheme: AppBarTheme(
-      color: Colors.blueGrey,
+      backgroundColor: Colors.blueGrey,
       centerTitle: true,
       elevation: 2,
       titleTextStyle: GoogleFonts.lato(
