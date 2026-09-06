@@ -102,6 +102,40 @@ class NotificationsScreen extends StatelessWidget {
                 color: Color(0xFF6C3CE1),
               ),
             )
+          : provider.errorMessage != null && notifications.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.error_outline,
+                        size: 50,
+                        color: Colors.redAccent,
+                      ),
+                      const SizedBox(height: 12),
+                      const Text(
+                        'Failed to load notifications',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF6C3CE1),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        onPressed: () => context.read<NotificationProvider>().loadNotifications(),
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
+                )
           : RefreshIndicator(
               color: const Color(0xFF6C3CE1),
               onRefresh: () =>

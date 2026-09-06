@@ -81,8 +81,8 @@ class NotificationProvider extends ChangeNotifier {
     );
   }
 
-  Future<void> loadNotifications([String? userId]) async {
-    final targetUid = userId ?? _auth.currentUser?.uid;
+  Future<void> loadNotifications() async {
+    final targetUid = _auth.currentUser?.uid;
     if (targetUid == null || targetUid.isEmpty) {
       _notifications.clear();
       notifyListeners();
@@ -113,6 +113,7 @@ class NotificationProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
 
   // Create notification in Firestore
   Future<void> addNotification(

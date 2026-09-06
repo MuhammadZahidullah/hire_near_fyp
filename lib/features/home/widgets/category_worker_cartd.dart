@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hire_near_fyp/feature/auth/providers/auth_provider.dart';
 import 'package:hire_near_fyp/feature/booking_confirm/models/confirm_booking_model.dart';
 import 'package:hire_near_fyp/feature/booking_confirm/screens/confirm_booking_screen.dart';
 import 'package:hire_near_fyp/feature/favorites/providers/favorites_provider.dart';
@@ -18,7 +19,11 @@ class CategoryWorkerCartd extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final favProvider = context.watch<FavoritesProvider>();
-
+    // Req 5: prevent self-favoriting — hide heart when viewing own profile.
+    final currentUid =
+        context.read<AuthProvider>().currentUser?.id ?? '';
+    final isSelf =
+        worker.workerId != null && worker.workerId == currentUid;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(16),
@@ -92,24 +97,26 @@ class CategoryWorkerCartd extends StatelessWidget {
                 ),
               ),
 
-              InkWell(
-                borderRadius: BorderRadius.circular(30),
-                onTap: () {
-                  favProvider.toggleFavorite(worker);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: Icon(
-                    favProvider.isFavorite(worker.id)
-                        ? Icons.favorite
-                        : Icons.favorite_border,
-                    color: favProvider.isFavorite(worker.id)
-                        ? Colors.red
-                        : Colors.grey,
-                    size: 24,
+              // Heart button — hidden when viewing own profile (self-favorite guard)
+              if (!isSelf)
+                InkWell(
+                  borderRadius: BorderRadius.circular(30),
+                  onTap: () {
+                    context.read<FavoritesProvider>().toggleFavorite(worker);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Icon(
+                      favProvider.isFavorite(worker.workerId)
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                      color: favProvider.isFavorite(worker.workerId)
+                          ? Colors.red
+                          : Colors.grey,
+                      size: 24,
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
 
@@ -216,9 +223,9 @@ class CategoryWorkerCartd extends StatelessWidget {
                               isVerified: worker.isVerified,
                               serviceCharge: worker.price,
                               bookingFee: 50,
-                              location: 'Your Location',
-                              date: '12 May 2024',
-                              time: '2:00 PM',
+                              location: '',
+                              date: '',
+                              time: '',
                               service: worker.role,
                               imageUrl: worker.imageUrl,
                             ),

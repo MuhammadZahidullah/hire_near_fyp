@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:hire_near_fyp/feature/auth/providers/auth_provider.dart';
 import 'package:hire_near_fyp/feature/auth/screens/login_screen.dart';
 import 'package:hire_near_fyp/feature/become_worker/become_worker_screen/become_worker_screen.dart';
+import 'package:hire_near_fyp/feature/favorites/providers/favorites_provider.dart';
 import 'package:hire_near_fyp/feature/notifications/screens/notifications_screen.dart';
 import 'package:hire_near_fyp/feature/worker/screens/worker_dashboard.dart';
+import 'package:hire_near_fyp/features/home/widgets/profile/edit_profile_screen.dart';
 import 'package:hire_near_fyp/features/home/widgets/profile/menu_item_tile.dart';
 import 'package:hire_near_fyp/features/home/widgets/profile/menu_section.dart';
 import 'package:hire_near_fyp/features/home/widgets/profile/profil_hero_card.dart';
@@ -63,7 +65,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(height: 16),
 
-              ProfilHeroCard(onEditTap: () {}, user: user),
+              ProfilHeroCard(
+                onEditTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const EditProfileScreen(),
+                    ),
+                  );
+                },
+                user: user,
+              ),
               const SizedBox(height: 16),
 
               WorkerBanner(
@@ -105,8 +117,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   MenuItemTile(
                     icon: Icons.person_outline,
-                    label: 'Persnal Information',
-                    onTap: () {},
+                    label: 'Personal Information',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const EditProfileScreen(),
+                        ),
+                      );
+                    },
                   ),
                   MenuItemTile(
                     icon: Icons.location_on_outlined,
@@ -183,12 +202,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     label: 'About HireNear',
                     onTap: () {},
                   ),
-                  // ✅ New
                   MenuItemTile(
                     icon: Icons.logout,
                     label: 'Logout',
                     isDanger: true,
                     onTap: () {
+                      // Step 0 — clear favorites so next user starts fresh
+                      context.read<FavoritesProvider>().clearFavorites();
+
                       // Step 1 — logout from AuthProvider
                       context.read<AuthProvider>().logout();
 

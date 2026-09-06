@@ -52,11 +52,9 @@ class PopularWorkersSection extends StatelessWidget {
                         isVerified: worker.isVerified,
                         serviceCharge: worker.price,
                         bookingFee: 50,
-                        location: worker.distance.isNotEmpty
-                            ? worker.distance
-                            : 'Your Location',
-                        date: '12 May 2024',
-                        time: '2:00 PM',
+                        location: '',
+                        date: '',
+                        time: '',
                         service: worker.role,
                         imageUrl: worker.imageUrl,
                       ),

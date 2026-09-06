@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hire_near_fyp/core/widgets/rounded_button.dart';
 import 'package:hire_near_fyp/feature/auth/providers/auth_provider.dart';
 import 'package:hire_near_fyp/feature/auth/screens/register_screen.dart';
+import 'package:hire_near_fyp/feature/favorites/providers/favorites_provider.dart';
 import 'package:hire_near_fyp/feature/home/screens/main_screen.dart';
 import 'package:hire_near_fyp/feature/worker/screens/worker_dashboard.dart';
 import 'package:hire_near_fyp/features/home/widgets/profile/providers/profile_providers.dart';
@@ -135,6 +136,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ),
                                       );
                                     } else {
+                                      // Load favorites for this customer.
+                                      if (user?.id != null) {
+                                        // ignore: use_build_context_synchronously
+                                        await context
+                                            .read<FavoritesProvider>()
+                                            .loadForUser(user!.id);
+                                      }
+                                      // ignore: use_build_context_synchronously
                                       Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(

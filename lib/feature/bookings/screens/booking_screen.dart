@@ -8,6 +8,7 @@ import 'package:hire_near_fyp/feature/bookings/widgets/booking_section_title.dar
 import 'package:hire_near_fyp/feature/bookings/widgets/booking_tab_bar.dart';
 import 'package:hire_near_fyp/feature/notifications/providers/notification_provider.dart';
 import 'package:hire_near_fyp/feature/notifications/screens/notifications_screen.dart';
+import 'package:hire_near_fyp/feature/review/providers/review_provider.dart';
 import 'package:hire_near_fyp/feature/review/widgets/add_reveiw_sheet.dart';
 import 'package:provider/provider.dart';
 
@@ -24,9 +25,24 @@ class _BookingsScreenState extends State<BookingsScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<BookingProvider>().loadBookings();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await context.read<BookingProvider>().loadBookings();
+      // Pre-fetch reviews for completed bookings so hasReviewedBooking works
+      if (mounted) {
+        _prefetchReviewsForCompleted();
+      }
     });
+  }
+
+  void _prefetchReviewsForCompleted() {
+    final bookingProvider = context.read<BookingProvider>();
+    final reviewProvider = context.read<ReviewProvider>();
+    for (final booking in bookingProvider.completeBookings) {
+      final wid = booking.workerId ?? '';
+      if (wid.isNotEmpty) {
+        reviewProvider.fetchReviewsForWorker(wid);
+      }
+    }
   }
 
   // get list based on selected tab
@@ -188,6 +204,42 @@ class _BookingsScreenState extends State<BookingsScreen> {
                             ),
                           ),
                         )
+                      else if (bookingProvider.errorMessage != null && currentList.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 40),
+                          child: Center(
+                            child: Column(
+                              children: [
+                                const Icon(
+                                  Icons.error_outline,
+                                  size: 50,
+                                  color: Colors.redAccent,
+                                ),
+                                const SizedBox(height: 12),
+                                const Text(
+                                  'Failed to load bookings',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF6C3CE1),
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  onPressed: () => context.read<BookingProvider>().loadBookings(),
+                                  child: const Text('Retry'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
                       else if (currentList.isEmpty)
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 40),
@@ -272,8 +324,15 @@ class _BookingsScreenState extends State<BookingsScreen> {
                                     ),
                                   );
                                 }
-                                // Completed
+                                // Completed — open review sheet (Req 5, 6, 7)
                                 else if (booking.status == 'completed') {
+                                  // Ensure reviews are loaded for this worker
+                                  final wid = booking.workerId ?? '';
+                                  if (wid.isNotEmpty) {
+                                    context
+                                        .read<ReviewProvider>()
+                                        .fetchReviewsForWorker(wid);
+                                  }
                                   showModalBottomSheet(
                                     context: context,
                                     isScrollControlled: true,
@@ -282,11 +341,8 @@ class _BookingsScreenState extends State<BookingsScreen> {
                                         top: Radius.circular(20),
                                       ),
                                     ),
-                                    builder: (context) => AddReviewSheet(
-                                      workerId: booking.id,
-                                      workerName: booking.workerName,
-                                      userName: 'Muhammad Zahidullah',
-                                    ),
+                                    builder: (context) =>
+                                        AddReviewSheet(booking: booking),
                                   );
                                 }
                                 // Cancelled / Rejected

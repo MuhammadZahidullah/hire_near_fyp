@@ -1,0 +1,76 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // USERS: users/{uid}
+    match /users/{uid} {
+      // Worker profiles remain readable where required by WorkerProvider
+      // Do not break worker discovery
+      allow read: if request.auth != null;
+      
+      // authenticated user can create/update own profile; cannot update another's
+      allow create, update: if request.auth != null && request.auth.uid == uid;
+      
+      // FAVORITES: users/{uid}/favorites/{workerId}
+      match /favorites/{workerId} {
+        // only account owner can read/write/delete their favorites
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+      }
+    }
+    
+    // BOOKINGS: bookings/{bookingId}
+    match /bookings/{bookingId} {
+      // only customer and assigned worker can read booking
+      allow read: if request.auth != null && (resource.data.userId == request.auth.uid || resource.data.workerId == request.auth.uid);
+      
+      // customer can create only bookings where userId == auth.uid
+      // CRITICAL: customer cannot book themselves (workerId != auth.uid)
+      allow create: if request.auth != null 
+                    && request.resource.data.userId == request.auth.uid 
+                    && request.resource.data.workerId != request.auth.uid;
+      
+      // customer can cancel; worker can accept/reject/complete
+      // no unrelated user can update booking
+      allow update: if request.auth != null 
+                    && (resource.data.userId == request.auth.uid || resource.data.workerId == request.auth.uid)
+                    && request.resource.data.userId == resource.data.userId 
+                    && request.resource.data.workerId == resource.data.workerId;
+                    
+      allow delete: if false;
+    }
+    
+    // NOTIFICATIONS: notifications/{notificationId}
+    match /notifications/{notificationId} {
+      // recipient can read/update/delete only their own notifications
+      allow read, update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
+      
+      // preserve current legitimate cross-user notification creation flow
+      allow create: if request.auth != null;
+    }
+    
+    // REVIEWS: reviews/{bookingId}
+    match /reviews/{bookingId} {
+      allow read: if request.auth != null;
+      
+      allow create: if request.auth != null
+                    // customerId must equal auth.uid
+                    && request.resource.data.customerId == request.auth.uid
+                    // booking must exist
+                    && exists(/databases/$(database)/documents/bookings/$(bookingId))
+                    // booking.userId must equal auth.uid
+                    && get(/databases/$(database)/documents/bookings/$(bookingId)).data.userId == request.auth.uid
+                    // booking.workerId must equal review.workerId
+                    && get(/databases/$(database)/documents/bookings/$(bookingId)).data.workerId == request.resource.data.workerId
+                    // booking.status must be completed
+                    && get(/databases/$(database)/documents/bookings/$(bookingId)).data.status == 'completed'
+                    // rating 1 to 5
+                    && request.resource.data.rating >= 1 && request.resource.data.rating <= 5;
+                    
+      allow update, delete: if false;
+    }
+    
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

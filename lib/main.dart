@@ -33,10 +33,20 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => SearchProvider()),
         ChangeNotifierProvider(create: (_) => CategoryProvider()),
         ChangeNotifierProvider(create: (_) => WorkerDashboardProvider()),
-        ChangeNotifierProvider(create: (_) => WorkerProvider()..fetchWorkers()),
-
-        ChangeNotifierProvider(create: (_) => NotificationProvider()),
         ChangeNotifierProvider(create: (_) => ReviewProvider()),
+        // WorkerProvider depends on ReviewProvider for real ratings
+        ChangeNotifierProxyProvider<ReviewProvider, WorkerProvider>(
+          create: (_) => WorkerProvider(),
+          update: (context, reviewProvider, previous) {
+            final wp = previous ?? WorkerProvider();
+            // Only trigger fetch if workers not yet loaded
+            if (wp.workers.isEmpty && !wp.isLoading) {
+              wp.fetchWorkers(reviewProvider: reviewProvider);
+            }
+            return wp;
+          },
+        ),
+        ChangeNotifierProvider(create: (_) => NotificationProvider()),
         ChangeNotifierProvider(create: (_) => FavoritesProvider()),
       ],
       child: MaterialApp(

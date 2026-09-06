@@ -12,6 +12,8 @@ class BookingProvider extends ChangeNotifier {
   final List<BookingModel> _bookings = [];
   bool _isLoading = false;
   String? _errorMessage;
+  // Guard against concurrent duplicate booking submissions.
+  bool _isAddingBooking = false;
 
   List<BookingModel> get allBookings => _bookings;
   bool get isLoading => _isLoading;
@@ -25,6 +27,12 @@ class BookingProvider extends ChangeNotifier {
       _bookings.where((b) => b.status == 'cancelled' || b.status == 'rejected').toList();
 
   Future<void> addBooking(BookingModel booking) async {
+    // Provider-level guard: reject concurrent duplicate submission attempts.
+    if (_isAddingBooking) {
+      debugPrint("ADD BOOKING ignored — already in progress");
+      return;
+    }
+    _isAddingBooking = true;
     debugPrint("START ADD BOOKING");
     try {
       final user = _auth.currentUser;
@@ -34,6 +42,11 @@ class BookingProvider extends ChangeNotifier {
         debugPrint("NO AUTHENTICATED USER");
         return;
       }
+
+      if (customerUid == booking.workerId) {
+        throw Exception("You cannot book your own service.");
+      }
+
       debugPrint("BEFORE FIRESTORE");
 
       final docRef = await _firestore.collection('bookings').add({
@@ -93,6 +106,9 @@ class BookingProvider extends ChangeNotifier {
       debugPrint(stackTrace.toString());
       debugPrint('==========================');
       rethrow;
+    } finally {
+      // Always release the guard so future bookings (including retries) can proceed.
+      _isAddingBooking = false;
     }
   }
 

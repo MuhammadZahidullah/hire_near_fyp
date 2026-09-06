@@ -45,6 +45,73 @@ class ProfileProvider extends ChangeNotifier {
     }
   }
 
+  /// Saves editable profile fields to Firestore and updates local state.
+  /// Returns null on success, or an error message string on failure.
+  Future<String?> saveProfile({
+    required String name,
+    required String phone,
+    required String location,
+    // Worker-only fields (pass null for customer)
+    String? skill,
+    String? experience,
+    int? price,
+    String? description,
+  }) async {
+    // ── Validation ──────────────────────────────────────────────────────────
+    final trimmedName = name.trim();
+    if (trimmedName.isEmpty) return 'Name cannot be empty.';
+
+    final isWorker = _user?.isWorker == true || _user?.activeRole == 'worker';
+    if (isWorker) {
+      final trimmedSkill = skill?.trim() ?? '';
+      if (trimmedSkill.isEmpty) return 'Skill cannot be empty.';
+      if (price == null || price <= 0) {
+        return 'Price must be greater than 0.';
+      }
+    }
+
+    // ── Build update map ─────────────────────────────────────────────────────
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return 'Not logged in.';
+
+    final Map<String, dynamic> updates = {
+      'name': trimmedName,
+      'phone': phone.trim(),
+      'location': location.trim(),
+    };
+
+    if (isWorker) {
+      updates['skill'] = skill?.trim() ?? '';
+      updates['experience'] = experience?.trim() ?? '';
+      updates['price'] = price ?? 0;
+      updates['description'] = description?.trim() ?? '';
+    }
+
+    try {
+      await _firestore.collection('users').doc(uid).update(updates);
+
+      // Update in-memory state immediately (Req 5)
+      _user = _user?.copyWith(
+        name: trimmedName,
+        phone: phone.trim(),
+        location: location.trim(),
+        skill: isWorker ? (skill?.trim() ?? _user?.skill) : _user?.skill,
+        experience: isWorker
+            ? (experience?.trim() ?? _user?.experience)
+            : _user?.experience,
+        price: isWorker ? price : _user?.price,
+        description: isWorker
+            ? (description?.trim() ?? _user?.description)
+            : _user?.description,
+      );
+      notifyListeners();
+      return null; // success
+    } catch (e) {
+      debugPrint('[ProfileProvider] saveProfile error: $e');
+      return 'Failed to save profile. Please try again.';
+    }
+  }
+
   // update whole profile
   void updateProfile({
     String? name,

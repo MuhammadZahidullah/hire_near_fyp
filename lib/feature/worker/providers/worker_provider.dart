@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hire_near_fyp/data/models/user_model.dart';
+import 'package:hire_near_fyp/feature/review/providers/review_provider.dart';
 import 'package:hire_near_fyp/features/home/popular_workers/models/category_worker_model.dart';
 
 class WorkerProvider extends ChangeNotifier {
@@ -71,8 +72,8 @@ class WorkerProvider extends ChangeNotifier {
     }).toList();
   }
 
-  // Fetch real workers from Firestore
-  Future<void> fetchWorkers() async {
+  // Fetch real workers from Firestore (Req 9 — real ratings from reviews)
+  Future<void> fetchWorkers({ReviewProvider? reviewProvider}) async {
     try {
       _isLoading = true;
       _errorMessage = null;
@@ -91,6 +92,7 @@ class WorkerProvider extends ChangeNotifier {
         return UserModel.fromMap(data);
       }).toList();
 
+      // Build initial list with static rating as placeholder
       _categoryWorkers = _workers.map((user) {
         return CategoryWorkerModel(
           id: user.id.hashCode,
@@ -99,7 +101,7 @@ class WorkerProvider extends ChangeNotifier {
           role: (user.skill != null && user.skill!.isNotEmpty)
               ? user.skill!
               : 'Worker',
-          rating: user.rating > 0 ? user.rating : 4.5,
+          rating: user.rating > 0 ? user.rating : 0.0,
           reviews: user.bookings,
           distance: user.location.isNotEmpty ? user.location : 'Nearby',
           imageUrl: user.avatarUrl ?? '',
@@ -110,6 +112,38 @@ class WorkerProvider extends ChangeNotifier {
 
       _isLoading = false;
       notifyListeners();
+
+      // Fetch real average ratings from reviews collection (Req 9)
+      if (reviewProvider != null && _workers.isNotEmpty) {
+        final workerIds =
+            _workers.map((u) => u.id).where((id) => id.isNotEmpty).toList();
+
+        final realRatings =
+            await reviewProvider.fetchAverageRatingsForWorkers(workerIds);
+
+        if (realRatings.isNotEmpty) {
+          _categoryWorkers = _categoryWorkers.map((worker) {
+            final realAvg = realRatings[worker.workerId];
+            if (realAvg != null && realAvg > 0) {
+              return CategoryWorkerModel(
+                id: worker.id,
+                workerId: worker.workerId,
+                name: worker.name,
+                role: worker.role,
+                rating: double.parse(realAvg.toStringAsFixed(1)),
+                reviews: worker.reviews,
+                distance: worker.distance,
+                imageUrl: worker.imageUrl,
+                isVerified: worker.isVerified,
+                price: worker.price,
+              );
+            }
+            return worker;
+          }).toList();
+
+          notifyListeners();
+        }
+      }
     } catch (e) {
       _isLoading = false;
       _errorMessage = e.toString();
@@ -118,3 +152,4 @@ class WorkerProvider extends ChangeNotifier {
     }
   }
 }
+

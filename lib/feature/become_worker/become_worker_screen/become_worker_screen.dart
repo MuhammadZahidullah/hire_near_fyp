@@ -7,6 +7,9 @@ import 'package:hire_near_fyp/feature/become_worker/widgets/section_title.dart';
 import 'package:hire_near_fyp/feature/become_worker/widgets/service_dropdown.dart';
 import 'package:hire_near_fyp/feature/become_worker/widgets/submit_button.dart';
 import 'package:provider/provider.dart';
+import 'package:hire_near_fyp/features/home/widgets/profile/providers/profile_providers.dart';
+import 'package:hire_near_fyp/feature/worker/providers/worker_provider.dart';
+import 'package:hire_near_fyp/feature/review/providers/review_provider.dart';
 
 class BecomeWorkerScreen extends StatefulWidget {
   const BecomeWorkerScreen({super.key});
@@ -22,9 +25,10 @@ class _BecomeWorkerScreenState extends State<BecomeWorkerScreen> {
   final _experienceController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _addressController = TextEditingController();
+  final _priceController = TextEditingController();
+  final _locationController = TextEditingController();
 
   String? _selectedService;
-  String? _selectedCity;
 
   final List<String> _services = [
     'Plumber',
@@ -36,14 +40,17 @@ class _BecomeWorkerScreenState extends State<BecomeWorkerScreen> {
     'Mason',
   ];
 
-  final List<String> _cities = [
-    'Lahore',
-    'Karachi',
-    'Islamabad',
-    'Peshawar',
-    'Quetta',
-    'Multan',
-  ];
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authProvider = context.read<AuthProvider>();
+      final location = authProvider.currentUser?.location;
+      if (location != null && location != 'Not set') {
+        _locationController.text = location;
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -53,6 +60,8 @@ class _BecomeWorkerScreenState extends State<BecomeWorkerScreen> {
     _experienceController.dispose();
     _descriptionController.dispose();
     _addressController.dispose();
+    _priceController.dispose();
+    _locationController.dispose();
     super.dispose();
   }
 
@@ -142,15 +151,19 @@ class _BecomeWorkerScreenState extends State<BecomeWorkerScreen> {
                 controller: _descriptionController,
                 maxLines: 4,
               ),
+              CustomTextField(
+                hintText: 'Price',
+                icon: Icons.attach_money_outlined,
+                controller: _priceController,
+                keyboardType: TextInputType.number,
+              ),
 
               // Location
               SectionTitle(title: 'Location'),
-              ServiceDropdown(
-                hint: 'Your City',
+              CustomTextField(
+                hintText: 'Your City / Location',
                 icon: Icons.location_on_outlined,
-                items: _cities,
-                value: _selectedCity,
-                onChanged: (val) => setState(() => _selectedCity = val),
+                controller: _locationController,
               ),
               CustomTextField(
                 hintText: 'Full Address (Optional)',
@@ -169,43 +182,76 @@ class _BecomeWorkerScreenState extends State<BecomeWorkerScreen> {
               SizedBox(height: 8),
 
               // Submit Button
-              //SubmitButton(label: 'Submit & Become a Worker', onTap: () {}),
               SubmitButton(
-  label: 'Submit & Become a Worker',
-  onTap: () async {
-    final authProvider = context.read<AuthProvider>();
+                label: 'Submit & Become a Worker',
+                onTap: () async {
+                  final authProvider = context.read<AuthProvider>();
 
-    if (authProvider.currentUser == null) return;
+                  if (authProvider.currentUser == null) return;
 
-    // final updatedUser = authProvider.currentUser!.copyWith(
-    //   isWorker: true,
-    //   activeRole: 'worker',
-    //   skill: _selectedService,
-    //   experience: _experienceController.text,
-    //   description: _descriptionController.text,
-    //   location: _selectedCity ?? '',
-    // );
-    await authProvider.becomeWorker(
-  skill: _selectedService ?? '',
-  experience: _experienceController.text,
-  price: 0, // change later when you add a price field
-  description: _descriptionController.text,
-);
+                  final skill = _selectedService ?? '';
+                  final experience = _experienceController.text.trim();
+                  final description = _descriptionController.text.trim();
+                  final priceText = _priceController.text.trim();
+                  final location = _locationController.text.trim();
 
-    // Next step: save this to Firestore
-   // await authProvider.becomeWorker(updatedUser);
+                  if (skill.isEmpty ||
+                      experience.isEmpty ||
+                      description.isEmpty ||
+                      priceText.isEmpty ||
+                      location.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Please fill in all required fields."),
+                      ),
+                    );
+                    return;
+                  }
 
-if (!mounted) return;
+                  final price = int.tryParse(priceText);
+                  if (price == null || price <= 0) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Please enter a valid positive price."),
+                      ),
+                    );
+                    return;
+                  }
 
-ScaffoldMessenger.of(context).showSnackBar(
-  const SnackBar(
-    content: Text("You are now registered as a worker!"),
-  ),
-);
+                    try {
+                      await authProvider.becomeWorker(
+                        skill: skill,
+                        experience: experience,
+                        price: price,
+                        description: description,
+                        location: location,
+                      );
 
-Navigator.pop(context);
-  },
-),
+                      if (!context.mounted) return;
+
+                      // Fix: Refresh ProfileProvider and WorkerProvider after become worker
+                      context.read<ProfileProvider>().loadProfile();
+                      context.read<WorkerProvider>().fetchWorkers(
+                        reviewProvider: context.read<ReviewProvider>(),
+                      );
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("You are now registered as a worker!"),
+                        ),
+                      );
+
+                      Navigator.pop(context);
+                    } catch (e) {
+                      if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(e.toString().replaceAll('Exception: ', '')),
+                      ),
+                    );
+                  }
+                },
+              ),
             ],
           ),
         ),

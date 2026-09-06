@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hire_near_fyp/feature/auth/providers/auth_provider.dart';
 import 'package:hire_near_fyp/feature/auth/screens/login_screen.dart';
 import 'package:hire_near_fyp/feature/bookings/models/booking_model.dart';
+import 'package:hire_near_fyp/feature/favorites/providers/favorites_provider.dart';
 import 'package:hire_near_fyp/feature/home/screens/main_screen.dart';
 import 'package:hire_near_fyp/feature/notifications/providers/notification_provider.dart';
 import 'package:hire_near_fyp/feature/notifications/screens/notifications_screen.dart';
@@ -23,6 +24,13 @@ class _WorkerDashboardState extends State<WorkerDashboard> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<WorkerDashboardProvider>().loadBookings();
+
+      // Load this worker's favorites so the heart button works in
+      // worker-mode and when they switch to Find Services.
+      final uid = context.read<AuthProvider>().currentUser?.id;
+      if (uid != null) {
+        context.read<FavoritesProvider>().loadForUser(uid);
+      }
     });
   }
 
@@ -66,7 +74,18 @@ class _WorkerDashboardState extends State<WorkerDashboard> {
               tooltip: 'Account Menu',
               onSelected: (value) async {
                 if (value == 'customer_mode') {
+                  // Ensure favorites are loaded before entering customer view.
+                  final uid =
+                      context.read<AuthProvider>().currentUser?.id;
+                  if (uid != null) {
+                    // ignore: use_build_context_synchronously
+                    await context
+                        .read<FavoritesProvider>()
+                        .loadForUser(uid);
+                  }
+                  // ignore: use_build_context_synchronously
                   context.read<ProfileProvider>().loadProfile();
+                  // ignore: use_build_context_synchronously
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -74,6 +93,11 @@ class _WorkerDashboardState extends State<WorkerDashboard> {
                     ),
                   );
                 } else if (value == 'logout') {
+                  // Clear favorites before logging out so the next user
+                  // starts with a clean state.
+                  // ignore: use_build_context_synchronously
+                  context.read<FavoritesProvider>().clearFavorites();
+                  // ignore: use_build_context_synchronously
                   await context.read<AuthProvider>().logout();
                   if (!context.mounted) return;
                   Navigator.pushAndRemoveUntil(
@@ -339,8 +363,63 @@ class _BookingList extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = context.read<WorkerDashboardProvider>();
 
+    if (provider.errorMessage != null && bookings.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.error_outline,
+              size: 50,
+              color: Colors.redAccent,
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'Failed to load bookings',
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF6C3CE1),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              onPressed: () => provider.loadBookings(),
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      );
+    }
+
     if (bookings.isEmpty) {
-      return const Center(child: Text("No bookings found"));
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.inbox_outlined,
+              size: 50,
+              color: Colors.grey.shade300,
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'No booking requests yet',
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
+      );
     }
 
     return RefreshIndicator(

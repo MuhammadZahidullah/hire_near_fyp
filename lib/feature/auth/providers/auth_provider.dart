@@ -176,7 +176,12 @@ class AuthProvider extends ChangeNotifier {
     required String experience,
     required int price,
     required String description,
+    required String location,
   }) async {
+    if (skill.trim().isEmpty || experience.trim().isEmpty || description.trim().isEmpty || price <= 0 || location.trim().isEmpty) {
+      debugPrint("Provider validation failed for becomeWorker");
+      throw Exception("Invalid worker data");
+    }
     try {
       final user = _auth.currentUser;
 
@@ -189,6 +194,7 @@ class AuthProvider extends ChangeNotifier {
         'experience': experience,
         'price': price,
         'description': description,
+        'location': location,
       });
 
       _currentUser = _currentUser?.copyWith(
@@ -198,11 +204,13 @@ class AuthProvider extends ChangeNotifier {
         experience: experience,
         price: price,
         description: description,
+        location: location,
       );
 
       notifyListeners();
     } catch (e) {
       debugPrint("Become Worker Error: $e");
+      rethrow;
     }
   }
 
