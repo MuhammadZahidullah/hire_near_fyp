@@ -1,4 +1,4 @@
-package com.example.hire_near_fyp
+package com.hirenear.app
 
 import io.flutter.embedding.android.FlutterActivity
 
