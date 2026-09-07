@@ -7,6 +7,7 @@ import 'package:hire_near_fyp/feature/home/screens/main_screen.dart';
 import 'package:hire_near_fyp/feature/worker/screens/worker_dashboard.dart';
 import 'package:hire_near_fyp/features/home/widgets/profile/providers/profile_providers.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -26,6 +27,8 @@ class _SplashScreenState extends State<SplashScreen> {
       await authProvider.checkAuthState();
 
       if (!mounted) return;
+
+      FlutterNativeSplash.remove();
 
         if (authProvider.isLoggedIn) {
         final user = authProvider.currentUser;
@@ -61,18 +64,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white, // ← white background
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(32),
-          child: Image.asset(
-            'assets/images/splash_image.png',
-            fit: BoxFit.contain, // ← shows full image
-            width: double.infinity,
-          ),
-        ),
-      ),
+    return const Scaffold(
+      backgroundColor: Colors.white,
+      body: SizedBox.shrink(),
     );
   }
 }
