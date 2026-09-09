@@ -1,16 +1,35 @@
-# hire_near_fyp
+# HireNear
 
-A new Flutter project.
+HireNear is a Flutter-based Android marketplace application that connects customers with nearby local skilled workers such as electricians, plumbers, carpenters, painters, and mechanics.
 
-## Getting Started
+The project is built as a final-year software engineering project and focuses on making local service discovery and booking simpler through a mobile application.
 
-This project is a starting point for a Flutter application.
+## Current Status
 
-A few resources to get you started if this is your first Flutter project:
+HireNear is currently being prepared for testing and Play Store publication.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Tech Stack
+
+- Flutter
+- Dart
+- Provider
+- Firebase Authentication
+- Cloud Firestore
+
+## Platform
+
+- Android
+
+## Core Functionality
+
+The application includes customer and worker-related flows, service discovery, booking management, user profiles, and Firebase-backed data handling.
+
+More detailed documentation, screenshots, setup instructions, architecture information, testing status, known limitations, and future improvements will be added as the repository is professionally prepared.
+
+## Author
+
+**Muhammad Zahidullah Khan**
+
+- GitHub: [MuhammadZahidullah](https://github.com/MuhammadZahidullah)
+- LinkedIn: [muhammadzahidullah](https://www.linkedin.com/in/muhammadzahidullah)
