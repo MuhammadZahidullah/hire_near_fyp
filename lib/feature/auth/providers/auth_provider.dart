@@ -50,7 +50,7 @@ class AuthProvider extends ChangeNotifier {
         phone: phone,
         location: 'Not set',
         activeRole: role,
-        isWorker: role == 'worker',
+        isWorker: false,
         bookings: 0,
         rating: 0.0,
         totalSpent: 0,

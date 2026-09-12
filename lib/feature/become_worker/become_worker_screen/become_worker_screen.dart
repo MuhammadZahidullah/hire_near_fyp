@@ -10,9 +10,12 @@ import 'package:provider/provider.dart';
 import 'package:hire_near_fyp/features/home/widgets/profile/providers/profile_providers.dart';
 import 'package:hire_near_fyp/feature/worker/providers/worker_provider.dart';
 import 'package:hire_near_fyp/feature/review/providers/review_provider.dart';
+import 'package:hire_near_fyp/feature/worker/screens/worker_dashboard.dart';
 
 class BecomeWorkerScreen extends StatefulWidget {
-  const BecomeWorkerScreen({super.key});
+  final bool isRegistrationFlow;
+
+  const BecomeWorkerScreen({super.key, this.isRegistrationFlow = false});
 
   @override
   State<BecomeWorkerScreen> createState() => _BecomeWorkerScreenState();
@@ -45,9 +48,17 @@ class _BecomeWorkerScreenState extends State<BecomeWorkerScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final authProvider = context.read<AuthProvider>();
-      final location = authProvider.currentUser?.location;
-      if (location != null && location != 'Not set') {
-        _locationController.text = location;
+      final user = authProvider.currentUser;
+      
+      if (user != null) {
+        _nameController.text = user.name;
+        _phoneController.text = user.phone;
+        _emailController.text = user.email;
+        
+        final location = user.location;
+        if (location != 'Not set') {
+          _locationController.text = location;
+        }
       }
     });
   }
@@ -67,22 +78,27 @@ class _BecomeWorkerScreenState extends State<BecomeWorkerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFFF4F6FB),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Icon(Icons.arrow_back),
-                  ),
+    return PopScope(
+      canPop: !widget.isRegistrationFlow,
+      child: Scaffold(
+        backgroundColor: Color(0xFFF4F6FB),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if (!widget.isRegistrationFlow)
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Icon(Icons.arrow_back),
+                      )
+                    else
+                      SizedBox(width: 24), // Placeholder to balance the row
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -114,16 +130,19 @@ class _BecomeWorkerScreenState extends State<BecomeWorkerScreen> {
                 hintText: 'Full Name',
                 icon: Icons.person_outline,
                 controller: _nameController,
+                readOnly: true,
               ),
               CustomTextField(
                 hintText: 'Phone Number',
                 icon: Icons.phone_outlined,
                 controller: _phoneController,
+                readOnly: true,
               ),
               CustomTextField(
                 hintText: 'Email Address',
                 icon: Icons.email_outlined,
                 controller: _emailController,
+                readOnly: true,
               ),
 
               // Service Information
@@ -241,7 +260,16 @@ class _BecomeWorkerScreenState extends State<BecomeWorkerScreen> {
                         ),
                       );
 
-                      Navigator.pop(context);
+                      if (widget.isRegistrationFlow) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const WorkerDashboard(),
+                          ),
+                        );
+                      } else {
+                        Navigator.pop(context);
+                      }
                     } catch (e) {
                       if (!context.mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -256,6 +284,7 @@ class _BecomeWorkerScreenState extends State<BecomeWorkerScreen> {
           ),
         ),
       ),
+    ),
     );
   }
 }

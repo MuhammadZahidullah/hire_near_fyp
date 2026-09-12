@@ -4,6 +4,7 @@ import 'package:hire_near_fyp/feature/auth/providers/auth_provider.dart';
 import 'package:hire_near_fyp/feature/auth/screens/login_screen.dart';
 import 'package:hire_near_fyp/feature/favorites/providers/favorites_provider.dart';
 import 'package:hire_near_fyp/feature/home/screens/main_screen.dart';
+import 'package:hire_near_fyp/feature/become_worker/become_worker_screen/become_worker_screen.dart';
 import 'package:hire_near_fyp/feature/worker/screens/worker_dashboard.dart';
 import 'package:hire_near_fyp/features/home/widgets/profile/providers/profile_providers.dart';
 import 'package:provider/provider.dart';
@@ -32,13 +33,20 @@ class _SplashScreenState extends State<SplashScreen> {
 
         if (authProvider.isLoggedIn) {
         final user = authProvider.currentUser;
-        final isWorker = user?.activeRole == 'worker' || user?.isWorker == true;
-
-        if (isWorker) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const WorkerDashboard()),
-          );
+        if (user?.activeRole == 'worker') {
+          if (user?.isWorker == true) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const WorkerDashboard()),
+            );
+          } else {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const BecomeWorkerScreen(isRegistrationFlow: true),
+              ),
+            );
+          }
         } else {
           // Load this customer's favorites before showing the home screen.
           if (user?.id != null) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hire_near_fyp/core/widgets/rounded_button.dart';
 import 'package:hire_near_fyp/feature/auth/providers/auth_provider.dart';
 import 'package:hire_near_fyp/feature/home/screens/main_screen.dart';
+import 'package:hire_near_fyp/feature/become_worker/become_worker_screen/become_worker_screen.dart';
 import 'package:hire_near_fyp/feature/worker/screens/worker_dashboard.dart';
 import 'package:hire_near_fyp/features/home/widgets/profile/providers/profile_providers.dart';
 import 'package:provider/provider.dart';
@@ -288,15 +289,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     .read<AuthProvider>()
                                     .currentUser;
 
-                                if (user?.activeRole == 'worker' ||
-                                    user?.isWorker == true) {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          const WorkerDashboard(),
-                                    ),
-                                  );
+                                if (user?.activeRole == 'worker') {
+                                  if (user?.isWorker == true) {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const WorkerDashboard(),
+                                      ),
+                                    );
+                                  } else {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const BecomeWorkerScreen(
+                                                isRegistrationFlow: true),
+                                      ),
+                                    );
+                                  }
                                 } else {
                                   Navigator.pushReplacement(
                                     context,

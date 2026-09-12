@@ -6,6 +6,7 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final int? maxLines;
   final TextInputType? keyboardType;
+  final bool readOnly;
 
   const CustomTextField({
     super.key,
@@ -14,6 +15,7 @@ class CustomTextField extends StatelessWidget {
     required this.controller,
     this.maxLines = 1,
     this.keyboardType,
+    this.readOnly = false,
   });
 
   @override
@@ -22,7 +24,7 @@ class CustomTextField extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       margin: EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: readOnly ? Colors.grey.shade100 : Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.shade200),
       ),
@@ -35,7 +37,11 @@ class CustomTextField extends StatelessWidget {
               controller: controller,
               maxLines: maxLines ?? 1,
               keyboardType: keyboardType,
-              style: TextStyle(fontSize: 14, color: Colors.black87),
+              readOnly: readOnly,
+              style: TextStyle(
+                fontSize: 14, 
+                color: readOnly ? Colors.grey.shade700 : Colors.black87,
+              ),
               decoration: InputDecoration(
                 border: InputBorder.none,
                 hintText: hintText,
