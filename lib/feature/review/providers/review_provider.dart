@@ -75,11 +75,11 @@ class ReviewProvider extends ChangeNotifier {
     }
   }
 
-  /// Fetch reviews for all given worker IDs (used by WorkerProvider for bulk rating)
-  Future<Map<String, double>> fetchAverageRatingsForWorkers(
+  /// Fetch reviews for all given worker IDs (used by WorkerProvider for bulk rating and count)
+  Future<Map<String, ({double rating, int count})>> fetchRatingsAndCountsForWorkers(
     List<String> workerIds,
   ) async {
-    final Map<String, double> result = {};
+    final Map<String, ({double rating, int count})> result = {};
     if (workerIds.isEmpty) return result;
 
     try {
@@ -104,15 +104,16 @@ class ReviewProvider extends ChangeNotifier {
         }
 
         for (final entry in ratingsByWorker.entries) {
+          final count = entry.value.length;
           final avg =
-              entry.value.reduce((a, b) => a + b) / entry.value.length;
-          result[entry.key] = avg;
+              entry.value.reduce((a, b) => a + b) / count;
+          result[entry.key] = (rating: avg, count: count);
           // Cache locally
           // (full models not available here, so skip _reviewsByWorker update)
         }
       }
     } catch (e) {
-      debugPrint('ReviewProvider.fetchAverageRatingsForWorkers error: $e');
+      debugPrint('ReviewProvider.fetchRatingsAndCountsForWorkers error: $e');
     }
 
     return result;

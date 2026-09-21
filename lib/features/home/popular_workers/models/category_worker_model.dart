@@ -8,6 +8,7 @@ class CategoryWorkerModel {
   final String role;
   final double rating;
   final int reviews;
+  final int completedBookings;
   final String distance;
   final int price;
   final String imageUrl;
@@ -24,5 +25,6 @@ class CategoryWorkerModel {
     required this.isVerified,
     required this.price,
     required this.reviews,
+    this.completedBookings = 0,
   });
 }

@@ -3,6 +3,7 @@ import 'package:hire_near_fyp/feature/booking_confirm/models/confirm_booking_mod
 import 'package:hire_near_fyp/feature/booking_confirm/screens/confirm_booking_screen.dart';
 import 'package:hire_near_fyp/features/home/popular_workers/models/category_worker_model.dart';
 import 'package:hire_near_fyp/features/home/popular_workers/widgets/worker_card.dart';
+import 'package:hire_near_fyp/features/home/popular_workers/screens/popular_workers_screen.dart';
 
 class PopularWorkersSection extends StatelessWidget {
   final List<CategoryWorkerModel> workers;
@@ -22,7 +23,14 @@ class PopularWorkersSection extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const PopularWorkersScreen(),
+                    ),
+                  );
+                },
                 child: Text(
                   'See all',
                   style: TextStyle(color: Colors.deepPurpleAccent),
