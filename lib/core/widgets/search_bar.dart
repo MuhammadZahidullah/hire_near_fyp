@@ -8,30 +8,46 @@ class AppSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(10),
-      margin: EdgeInsets.all(10),
+      margin: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
         color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade200),
       ),
       child: Row(
         children: [
-          Icon(Icons.search, color: Colors.grey),
-          SizedBox(width: 7),
+          Icon(Icons.search, color: Colors.grey.shade500),
+          SizedBox(width: 12),
           Expanded(
             child: TextField(
               onChanged: onChanged,
-              style: TextStyle(fontSize: 15),
+              style: TextStyle(fontSize: 15, color: Colors.black87),
               decoration: InputDecoration(
                 hintText: hintText,
-
-                hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+                hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
                 border: InputBorder.none,
+                isDense: true,
+                contentPadding: EdgeInsets.symmetric(vertical: 12),
               ),
             ),
           ),
-          SizedBox(width: 7),
-          GestureDetector(child: Icon(Icons.tune, color: Colors.grey)),
+          SizedBox(width: 8),
+          Container(
+            padding: EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.02),
+                  blurRadius: 4,
+                  offset: Offset(0, 2),
+                )
+              ],
+            ),
+            child: Icon(Icons.tune, color: Color(0xFF6C3CE1), size: 20),
+          ),
         ],
       ),
     );

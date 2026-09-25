@@ -14,13 +14,13 @@ class PopularWorkersSection extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(12.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 'Popular workers',
-                style: Theme.of(context).textTheme.bodyMedium,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
               ),
               TextButton(
                 onPressed: () {
@@ -31,9 +31,14 @@ class PopularWorkersSection extends StatelessWidget {
                     ),
                   );
                 },
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size(50, 30),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
                 child: Text(
                   'See all',
-                  style: TextStyle(color: Colors.deepPurpleAccent),
+                  style: TextStyle(color: Color(0xFF6C3CE1), fontWeight: FontWeight.w600, fontSize: 14),
                 ),
               ),
             ],

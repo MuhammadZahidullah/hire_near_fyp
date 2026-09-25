@@ -7,12 +7,11 @@ class BecomeWorkerBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(18),
+      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
       width: double.infinity,
-      //  height: 150,
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         color: Color(0xFF6C3CE1),
       ),
       child: Row(
@@ -31,34 +30,32 @@ class BecomeWorkerBanner extends StatelessWidget {
                     decoration: TextDecoration.none,
                   ),
                 ),
-                SizedBox(height: 5),
+                SizedBox(height: 6),
                 Text(
-                  'Earn money by offering \nyour servicing',
+                  'Offer your skills and earn money',
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
+                    color: Colors.white.withValues(alpha: 0.9),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
                     decoration: TextDecoration.none,
                   ),
                 ),
-                SizedBox(height: 8),
+                SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: () {
-                    print('JOIN NOW TAPPED');
-                    onTap();
-                  },
+                  onPressed: onTap,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Color(0xFF6C3CE1),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   ),
-                  child: Text('Join Now'),
+                  child: Text('Join Now', style: TextStyle(fontWeight: FontWeight.bold)),
                 ),
-
-                //Image.asset(''),
               ],
             ),
           ),
-          Icon(Icons.engineering, size: 80, color: Colors.white),
+          Icon(Icons.engineering, size: 80, color: Colors.white.withValues(alpha: 0.9)),
         ],
       ),
     );

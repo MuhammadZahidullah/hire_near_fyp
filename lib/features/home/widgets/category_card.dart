@@ -12,22 +12,21 @@ class CategoryCard extends StatelessWidget {
       onTap: ontap,
       child: Container(
         decoration: BoxDecoration(
-          color: category.color.withValues(alpha: .6),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: category.color.withValues(alpha: 0.6)),
+          color: category.color.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(category.iconData, size: 26, color: category.iconColor),
-            SizedBox(height: 6),
+            Icon(category.iconData, size: 28, color: category.iconColor),
+            SizedBox(height: 8),
             Text(
-              category.title,
+              category.title == 'Pulumber' ? 'Plumber' : category.title,
               textAlign: TextAlign.center,
-              maxLines: 2,
+              maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600),
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black87),
             ),
           ],
         ),

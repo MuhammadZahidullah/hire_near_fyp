@@ -52,20 +52,21 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
 
-            SizedBox(height: 20),
+            SizedBox(height: 20), // 8px margin + 20px SizedBox = 28px visual separation
 
             // 3 - Categories Grid
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              padding: EdgeInsets.symmetric(horizontal: 24.0),
               child: GridView.builder(
+                padding: EdgeInsets.zero, // Remove hidden default padding
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
                 itemCount: CategaryData.categories.length,
                 physics: NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 4,
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
                   childAspectRatio: 0.9,
                 ),
                 itemBuilder: (context, index) {
