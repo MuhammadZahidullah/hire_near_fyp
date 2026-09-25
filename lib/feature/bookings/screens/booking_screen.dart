@@ -21,10 +21,12 @@ class BookingsScreen extends StatefulWidget {
 
 class _BookingsScreenState extends State<BookingsScreen> {
   int _selectedTab = 0;
+  late PageController _pageController;
 
   @override
   void initState() {
     super.initState();
+    _pageController = PageController(initialPage: _selectedTab);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await context.read<BookingProvider>().loadBookings();
       // Pre-fetch reviews for completed bookings so hasReviewedBooking works
@@ -32,6 +34,12 @@ class _BookingsScreenState extends State<BookingsScreen> {
         _prefetchReviewsForCompleted();
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   void _prefetchReviewsForCompleted() {
@@ -45,9 +53,8 @@ class _BookingsScreenState extends State<BookingsScreen> {
     }
   }
 
-  // get list based on selected tab
-  List<BookingModel> _getCurrentList(BookingProvider provider) {
-    switch (_selectedTab) {
+  List<BookingModel> _getListForIndex(BookingProvider provider, int index) {
+    switch (index) {
       case 0:
         return provider.pendingBookings;
       case 1:
@@ -59,9 +66,8 @@ class _BookingsScreenState extends State<BookingsScreen> {
     }
   }
 
-  // get section title based on tab
-  String get _sectionTitle {
-    switch (_selectedTab) {
+  String _getTitleForIndex(int index) {
+    switch (index) {
       case 0:
         return 'PENDING & ACTIVE';
       case 1:
@@ -73,9 +79,8 @@ class _BookingsScreenState extends State<BookingsScreen> {
     }
   }
 
-  // get section color based on tab
-  Color get _sectionColor {
-    switch (_selectedTab) {
+  Color _getColorForIndex(int index) {
+    switch (index) {
       case 0:
         return Colors.orange;
       case 1:
@@ -91,7 +96,6 @@ class _BookingsScreenState extends State<BookingsScreen> {
   Widget build(BuildContext context) {
     final bookingProvider = context.watch<BookingProvider>();
     final notificationProvider = context.watch<NotificationProvider>();
-    final currentList = _getCurrentList(bookingProvider);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6FB),
@@ -172,6 +176,11 @@ class _BookingsScreenState extends State<BookingsScreen> {
                 setState(() {
                   _selectedTab = index;
                 });
+                _pageController.animateToPage(
+                  index,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
               },
               pendingCount: bookingProvider.pendingBookings.length,
               completedCount: bookingProvider.completeBookings.length,
@@ -180,20 +189,33 @@ class _BookingsScreenState extends State<BookingsScreen> {
 
             // Content
             Expanded(
-              child: RefreshIndicator(
-                color: const Color(0xFF6C3CE1),
-                onRefresh: () => context.read<BookingProvider>().loadBookings(),
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Section Title
-                      BookingSectionTitle(
-                        title: _sectionTitle,
-                        count: currentList.length,
-                        color: _sectionColor,
-                      ),
+              child: PageView.builder(
+                controller: _pageController,
+                onPageChanged: (index) {
+                  setState(() {
+                    _selectedTab = index;
+                  });
+                },
+                itemCount: 3,
+                itemBuilder: (context, pageIndex) {
+                  final currentList = _getListForIndex(bookingProvider, pageIndex);
+                  final sectionTitle = _getTitleForIndex(pageIndex);
+                  final sectionColor = _getColorForIndex(pageIndex);
+
+                  return RefreshIndicator(
+                    color: const Color(0xFF6C3CE1),
+                    onRefresh: () => context.read<BookingProvider>().loadBookings(),
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Section Title
+                          BookingSectionTitle(
+                            title: sectionTitle,
+                            count: currentList.length,
+                            color: sectionColor,
+                          ),
 
                       if (bookingProvider.isLoading)
                         const Padding(
@@ -253,7 +275,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                                 ),
                                 const SizedBox(height: 12),
                                 Text(
-                                  'No ${_sectionTitle.toLowerCase()} bookings found',
+                                  'No ${sectionTitle.toLowerCase()} bookings found',
                                   style: const TextStyle(
                                     color: Colors.grey,
                                     fontSize: 14,
@@ -362,11 +384,13 @@ class _BookingsScreenState extends State<BookingsScreen> {
                     ],
                   ),
                 ),
-              ),
-            ),
-          ],
+              );
+            },
+          ),
         ),
-      ),
-    );
+      ],
+    ),
+  ),
+);
   }
 }
