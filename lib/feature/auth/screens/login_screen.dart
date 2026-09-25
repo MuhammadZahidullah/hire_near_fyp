@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hire_near_fyp/core/widgets/rounded_button.dart';
 import 'package:hire_near_fyp/feature/auth/providers/auth_provider.dart';
 import 'package:hire_near_fyp/feature/auth/screens/register_screen.dart';
 import 'package:hire_near_fyp/feature/favorites/providers/favorites_provider.dart';
@@ -19,10 +18,9 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+
   @override
   void dispose() {
-    // TODO: implement dispose
-
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
@@ -31,186 +29,221 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
+    
     return Scaffold(
-      body: SizedBox.expand(
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Image.asset('assets/images/login.png', fit: BoxFit.cover),
-
-            SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  SizedBox(height: 50),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: TextFormField(
-                      controller: emailController,
-                      style: TextStyle(color: Colors.black87, fontSize: 16),
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.email_outlined,
-                          color: Colors.black45,
-                        ),
-                        filled: true,
-                        fillColor: Colors.white.withValues(alpha: 0.90),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            16,
-                          ), // 👈 rounds the corners
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          borderSide: BorderSide(color: Colors.purple),
-                        ),
-                        hintText: 'Enter Email',
-                        hintStyle: TextStyle(color: Colors.black45),
-                      ),
-                    ),
+      backgroundColor: Colors.grey[50],
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Image.asset(
+                    'assets/images/hirenear_logo.png',
+                    height: 60,
+                    fit: BoxFit.contain,
                   ),
-                  SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: TextFormField(
-                      controller: passwordController,
-                      style: TextStyle(color: Colors.black87, fontSize: 16),
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.lock_outline,
-                          color: Colors.black45,
-                        ),
-                        filled: true,
-                        fillColor: Colors.white.withValues(alpha: 0.90),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            16,
-                          ), // 👈 rounds the corners
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          borderSide: BorderSide(color: Colors.purple),
-                        ),
-                        hintText: 'Enter Password',
-                        hintStyle: TextStyle(color: Colors.black45),
-                      ),
-                    ),
+                ),
+                const SizedBox(height: 32),
+                const Text(
+                  'Welcome back',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
                   ),
-                  SizedBox(height: 13),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                        child: // ✅ New
-                        RoundedButton(
-                          title: authProvider.isLoading
-                              ? 'Loading...'
-                              : 'LogIn',
-                          onTap: authProvider.isLoading
-                              ? () {}
-                              : () async {
-                                  await context.read<AuthProvider>().login(
-                                    emailController.text.trim(),
-                                    passwordController.text.trim(),
-                                  );
-
-                                  await context
-                                      .read<ProfileProvider>()
-                                      .loadProfile();
-
-                                  // ✅ New — role based navigation
-                                  if (context.read<AuthProvider>().isLoggedIn) {
-                                    final user = context
-                                        .read<AuthProvider>()
-                                        .currentUser;
-
-                                    if (user?.activeRole == 'worker') {
-                                      if (user?.isWorker == true) {
-                                        Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const WorkerDashboard(),
-                                          ),
-                                        );
-                                      } else {
-                                        Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const BecomeWorkerScreen(
-                                                    isRegistrationFlow: true),
-                                          ),
-                                        );
-                                      }
-                                    } else {
-                                      // Load favorites for this customer.
-                                      if (user?.id != null) {
-                                        // ignore: use_build_context_synchronously
-                                        await context
-                                            .read<FavoritesProvider>()
-                                            .loadForUser(user!.id);
-                                      }
-                                      // ignore: use_build_context_synchronously
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => MainScreen(),
-                                        ),
-                                      );
-                                    }
-                                  }
-                                },
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => RegisterScreen(),
-                            ),
-                          );
-                        },
-                        child: Text('Sign Up'),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Sign in to continue to HireNear',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black54,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 32),
+                Container(
+                  padding: const EdgeInsets.all(24.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
                       ),
                     ],
                   ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      TextFormField(
+                        controller: emailController,
+                        style: const TextStyle(color: Colors.black87, fontSize: 16),
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.email_outlined, color: Colors.black45),
+                          filled: true,
+                          fillColor: Colors.grey[100],
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(color: Color(0xFF6C3CE1)),
+                          ),
+                          hintText: 'Enter Email',
+                          hintStyle: const TextStyle(color: Colors.black45),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: passwordController,
+                        obscureText: true,
+                        style: const TextStyle(color: Colors.black87, fontSize: 16),
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.lock_outline, color: Colors.black45),
+                          filled: true,
+                          fillColor: Colors.grey[100],
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(color: Color(0xFF6C3CE1)),
+                          ),
+                          hintText: 'Enter Password',
+                          hintStyle: const TextStyle(color: Colors.black45),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: authProvider.isLoading ? null : () async {
+                            await context.read<AuthProvider>().login(
+                              emailController.text.trim(),
+                              passwordController.text.trim(),
+                            );
 
-                  // ← Add here below Row
-                  SizedBox(height: 8),
+                            if (!context.mounted) return;
+                            await context.read<ProfileProvider>().loadProfile();
 
-                  // Error Message
-                  if (authProvider.errorMessage != null)
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 15),
-                      child: Text(
-                        authProvider.errorMessage!,
+                            if (!context.mounted) return;
+                            if (context.read<AuthProvider>().isLoggedIn) {
+                              final user = context.read<AuthProvider>().currentUser;
+
+                              if (user?.activeRole == 'worker') {
+                                if (user?.isWorker == true) {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const WorkerDashboard(),
+                                    ),
+                                  );
+                                } else {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const BecomeWorkerScreen(
+                                        isRegistrationFlow: true,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } else {
+                                if (user?.id != null) {
+                                  await context.read<FavoritesProvider>().loadForUser(user!.id);
+                                }
+                                if (!context.mounted) return;
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const MainScreen(),
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF6C3CE1),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 0,
+                          ),
+                          child: authProvider.isLoading
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Text(
+                                  'Log In',
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                ),
+                        ),
+                      ),
+                      if (authProvider.errorMessage != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: Text(
+                            authProvider.errorMessage!,
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Don't have an account? ",
+                      style: TextStyle(color: Colors.black54, fontSize: 15),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const RegisterScreen(),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        'Sign up',
                         style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-
-                  // Loading
-                  if (authProvider.isLoading)
-                    Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Center(
-                        child: CircularProgressIndicator(
                           color: Color(0xFF6C3CE1),
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                ],
-              ),
+                  ],
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

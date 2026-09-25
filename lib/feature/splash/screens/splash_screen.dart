@@ -72,9 +72,20 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: Colors.white,
-      body: SizedBox.shrink(),
+      body: SafeArea(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(40.0),
+            child: Image.asset(
+              'assets/images/hirenear_symbol.png',
+              width: MediaQuery.of(context).size.width * 0.35,
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

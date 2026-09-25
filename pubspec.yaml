@@ -104,7 +104,7 @@ flutter_launcher_icons:
 
 flutter_native_splash:
   color: "#ffffff"
-  image: "assets/images/splash_image.png"
+  image: "assets/images/hirenear_symbol_padded.png"
   android_12:
     color: "#ffffff"
-    image: "assets/images/splash_image.png"
+    image: "assets/images/hirenear_symbol_padded.png"
