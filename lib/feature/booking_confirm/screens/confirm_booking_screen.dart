@@ -101,15 +101,21 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
     final picked = await showTimePicker(
       context: context,
       initialTime: _selectedTime ?? TimeOfDay.now(),
-      builder: (context, child) => Theme(
-        data: Theme.of(context).copyWith(
-          colorScheme: const ColorScheme.light(
-            primary: Color(0xFF6C3CE1),
-            onPrimary: Colors.white,
-            surface: Colors.white,
-          ),
+      initialEntryMode: TimePickerEntryMode.input,
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context).copyWith(
+          textScaler: TextScaler.noScaling,
         ),
-        child: child!,
+        child: Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFF6C3CE1),
+              onPrimary: Colors.white,
+              surface: Colors.white,
+            ),
+          ),
+          child: child!,
+        ),
       ),
     );
     if (picked != null) setState(() => _selectedTime = picked);
