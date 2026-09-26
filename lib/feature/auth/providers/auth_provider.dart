@@ -131,6 +131,30 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Reset Password
+  Future<void> resetPassword(String email) async {
+    try {
+      _isLoading = true;
+      _errorMessage = null;
+      notifyListeners();
+
+      await _auth.sendPasswordResetEmail(email: email);
+
+      _isLoading = false;
+      notifyListeners();
+    } on FirebaseAuthException catch (e) {
+      _isLoading = false;
+      _errorMessage = _getErrorMessage(e.code);
+      notifyListeners();
+      rethrow;
+    } catch (e) {
+      _isLoading = false;
+      _errorMessage = 'Password reset failed: ${e.toString()}';
+      notifyListeners();
+      rethrow;
+    }
+  }
+
   //   Future<void> becomeWorker(UserModel updatedUser) async {
   //   try {
   //     await _firestore
