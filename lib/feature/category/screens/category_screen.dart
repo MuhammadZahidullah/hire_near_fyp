@@ -6,7 +6,6 @@ import 'package:hire_near_fyp/feature/category/widgets/filter_chips_row.dart';
 import 'package:hire_near_fyp/feature/category/widgets/post_job_banner.dart';
 import 'package:hire_near_fyp/feature/search/providers/search_provider.dart';
 import 'package:hire_near_fyp/feature/worker/providers/worker_provider.dart';
-import 'package:hire_near_fyp/features/home/popular_workers/models/category_worker_model.dart';
 import 'package:hire_near_fyp/features/home/widgets/buttom_nav_bar.dart';
 import 'package:hire_near_fyp/features/home/widgets/category_worker_cartd.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +16,6 @@ class CategoryScreen extends StatefulWidget {
   final IconData categoryIcon;
   final Color iconColor;
   final Color iconBgColor;
-  final List<CategoryWorkerModel>? workers;
   const CategoryScreen({
     super.key,
     required this.categoryName,
@@ -25,7 +23,6 @@ class CategoryScreen extends StatefulWidget {
     required this.categoryIcon,
     required this.iconColor,
     required this.iconBgColor,
-    this.workers,
   });
 
   @override

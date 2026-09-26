@@ -84,7 +84,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 CategaryData.categories[index].iconData,
                             iconColor: CategaryData.categories[index].iconColor,
                             iconBgColor: CategaryData.categories[index].color,
-                            workers: CategaryData.categories[index].workers,
                           ),
                         ),
                       );
