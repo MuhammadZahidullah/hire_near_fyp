@@ -21,8 +21,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  // dark mode toggle state
-  bool isDarkMode = true;
 
   @override
   void initState() {
@@ -102,19 +100,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               MenuSection(
                 items: [
-                  if (isWorker)
-                    MenuItemTile(
-                      icon: Icons.dashboard_outlined,
-                      label: 'Worker Dashboard',
-                      onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const WorkerDashboard(),
-                          ),
-                        );
-                      },
-                    ),
                   MenuItemTile(
                     icon: Icons.person_outline,
                     label: 'Personal Information',
@@ -127,21 +112,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                     },
                   ),
-                  MenuItemTile(
-                    icon: Icons.location_on_outlined,
-                    label: 'My Addresses',
-                    onTap: () {},
-                  ),
-                  MenuItemTile(
-                    icon: Icons.credit_card_outlined,
-                    label: 'Payment Methods',
-                    onTap: () {},
-                  ),
-                  MenuItemTile(
-                    icon: Icons.lock_outline,
-                    label: 'Privacy & Security',
-                    onTap: () {},
-                  ),
                 ],
                 title: 'Account',
               ),
@@ -149,20 +119,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 16),
 
               MenuSection(
-                title: 'preferences',
+                title: 'Preferences',
                 items: [
-                  MenuItemTile(
-                    icon: Icons.dark_mode_outlined,
-                    label: 'Dark Mode',
-                    onTap: () {},
-
-                    trailing: Switch(
-                      value: isDarkMode,
-                      onChanged: (val) => setState(() => isDarkMode = val),
-
-                      activeThumbColor: Color(0xFF5B3FE4),
-                    ),
-                  ),
                   MenuItemTile(
                     icon: Icons.notifications_outlined,
                     label: 'Notifications',
@@ -175,15 +133,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                     },
                   ),
-                  MenuItemTile(
-                    icon: Icons.language,
-                    label: 'Language',
-                    onTap: () {},
-                    trailing: Text(
-                      'English',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  ),
                 ],
               ),
 
@@ -193,31 +142,129 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 title: 'Support',
                 items: [
                   MenuItemTile(
-                    icon: Icons.help_outline,
-                    label: 'Help & Support',
-                    onTap: () {},
-                  ),
-                  MenuItemTile(
                     icon: Icons.info_outline,
                     label: 'About HireNear',
-                    onTap: () {},
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text(
+                            'About HireNear',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          content: SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Local skilled services, made easier.',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF6C3CE1),
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                const Text(
+                                  'HireNear connects customers with local skilled workers, including electricians, plumbers, carpenters, mechanics, painters, and other service professionals.',
+                                  style: TextStyle(height: 1.4),
+                                ),
+                                const SizedBox(height: 12),
+                                const Text.rich(
+                                  TextSpan(
+                                    children: [
+                                      TextSpan(text: 'HireNear began as a Final Year Project by '),
+                                      TextSpan(
+                                        text: 'Muhammad Zahidullah',
+                                        style: TextStyle(fontWeight: FontWeight.w800),
+                                      ),
+                                      TextSpan(text: ' and '),
+                                      TextSpan(
+                                        text: 'Ashfaq Khan',
+                                        style: TextStyle(fontWeight: FontWeight.w800),
+                                      ),
+                                      TextSpan(text: ' and grew from an academic idea into a platform designed to address a real-world problem: connecting people who need services with skilled people who can provide them.'),
+                                    ],
+                                  ),
+                                  style: TextStyle(height: 1.4),
+                                ),
+                                const SizedBox(height: 12),
+                                const Text(
+                                  'Our vision is to continue improving HireNear beyond the classroom and create more opportunities for local skilled workers.',
+                                  style: TextStyle(height: 1.4),
+                                ),
+                                const SizedBox(height: 24),
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFF4F6FB),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Text(
+                                    'Built locally. Designed for real needs. Growing beyond the classroom.',
+                                    style: TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                      color: Colors.black87,
+                                      fontSize: 13,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text(
+                                'Close',
+                                style: TextStyle(color: Color(0xFF6C3CE1)),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                   MenuItemTile(
                     icon: Icons.logout,
                     label: 'Logout',
                     isDanger: true,
                     onTap: () {
-                      // Step 0 — clear favorites so next user starts fresh
-                      context.read<FavoritesProvider>().clearFavorites();
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Log out?'),
+                          content: const Text('Are you sure you want to log out of HireNear?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                // Step 0 — clear favorites so next user starts fresh
+                                context.read<FavoritesProvider>().clearFavorites();
 
-                      // Step 1 — logout from AuthProvider
-                      context.read<AuthProvider>().logout();
+                                // Step 1 — logout from AuthProvider
+                                context.read<AuthProvider>().logout();
 
-                      // Step 2 — go to LoginScreen
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginScreen()),
-                        (route) => false,
+                                // Step 2 — go to LoginScreen
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                                  (route) => false,
+                                );
+                              },
+                              child: const Text(
+                                'Log out',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ),
+                          ],
+                        ),
                       );
                     },
                   ),
